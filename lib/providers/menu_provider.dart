@@ -117,7 +117,6 @@ class MenuProvider extends ChangeNotifier {
   }
 
   Future<void> updateAdvisorAdminmenu(String menuname, String menucode) async {
-    print({'Update menuname', menuname, menucode});
     final response = await http.post(
       Uri.parse(
           "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminMenuM"),
@@ -138,7 +137,6 @@ class MenuProvider extends ChangeNotifier {
   }
 
   Future<void> deleteAdvisorAdminmenu(String id) async {
-    print({'delete menu api', id});
     try {
       final response = await http.post(
         Uri.parse(
@@ -249,7 +247,6 @@ class MenuProvider extends ChangeNotifier {
   }
 
   void editmenu(BuildContext context, Menu menu) {
-    print({'menucpde -- ', menu.menucode});
     _isFormVisible = true;
     setEditing(true);
     setEditingmenuCode(menu.menucode);

@@ -254,10 +254,6 @@ class UserProvider extends ChangeNotifier {
     );
 
     if (isEditing) {
-      // User existingUser = _userList.firstWhere(
-      //   (user) => user.emailid == newUser.emailid,
-      // );
-      // print({"updatw"});
       final index =
           _userList.indexWhere((user) => user.emailid == newUser.emailid);
       if (index != -1) {
@@ -362,7 +358,6 @@ class UserProvider extends ChangeNotifier {
   }
 
   void updateUser(User newUser, int index) {
-    print({"*** updateUser function ******"});
     if (index >= 0 && index < _userList.length) {
       _userList[index] = newUser;
 

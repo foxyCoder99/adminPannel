@@ -103,7 +103,6 @@ class CompanyTypeProvider extends ChangeNotifier {
     BuildContext context,
     String typename,
   ) async {
-    print({'insert name', typename});
     final response = await http.post(
       Uri.parse(
           "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorCompanyTypeM"),
@@ -136,7 +135,6 @@ class CompanyTypeProvider extends ChangeNotifier {
   }
 
   Future<void> deleteAdvisorCompanyType(String id) async {
-    print({'delete id', id});
     try {
       final response = await http.post(
         Uri.parse(
@@ -249,7 +247,6 @@ class CompanyTypeProvider extends ChangeNotifier {
   }
 
   void updateCompanyType(CompanyType newCompanyType, int index) {
-    print({"*** updateCompanyType function ******"});
     if (index >= 0 && index < _companyTypeList.length) {
       _companyTypeList[index] = newCompanyType;
 

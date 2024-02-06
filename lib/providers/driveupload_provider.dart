@@ -6,38 +6,45 @@ import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/models/admin/upload_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 
 class DriveUploadProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   PlatformFile? _selectedFile;
-  final List<UploadedFile> _uploadedFiles = [];
 
-  PlatformFile? get selectedFile => _selectedFile;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController fileDescpController = TextEditingController();
+  final List<UploadedFile> _uploadedFiles = [];
+  final List<UploadedFile> _readFiles = [];
   List<UploadedFile> _filteredFiles = [];
   final List<ShareMail> _sharingEmails = [];
-  final Set<String> _selectedEmailIds = {};
-  final Set<String> _selectedAccountCode = {};
-
-  Set<String> get selectedAccountCode => _selectedAccountCode;
-  Set<String> get selectedEmailIds => _selectedEmailIds;
-
-  List<ShareMail> get sharingEmails => _sharingEmails;
 
   String _searchQuery = '';
+  String selectedFileType = 'DOC';
+  TextEditingController emailController = TextEditingController();
+  TextEditingController fileDescpController = TextEditingController();
+
+  final Set<String> _selectedEmailIds = {};
+  final Set<String> _selectedAccountCode = {};
   final Set<String> _selectedCategories = {};
+
   bool _searchFocused = false;
   bool _uploadingFile = false;
   bool _isFormVisible = false;
+  bool _isLoading = false;
 
+  PlatformFile? get selectedFile => _selectedFile;
+  Set<String> get selectedAccountCode => _selectedAccountCode;
+  Set<String> get selectedEmailIds => _selectedEmailIds;
+  Set<String> get selectedCategories => _selectedCategories;
+
+  String get searchQuery => _searchQuery;
+  bool get isLoading => _isLoading;
   bool get isFormVisible => _isFormVisible;
   bool get uploadingFile => _uploadingFile;
   bool get searchFocused => _searchFocused;
-  Set<String> get selectedCategories => _selectedCategories;
-  String get searchQuery => _searchQuery;
 
+  List<ShareMail> get sharingEmails => _sharingEmails;
   List<UploadedFile> get uploadedFiles => _uploadedFiles;
+  List<UploadedFile> get readFiles => _readFiles;
   List<UploadedFile> get filteredFiles => _filteredFiles;
 
   void resetSearchQuery() {
@@ -61,6 +68,7 @@ class DriveUploadProvider extends ChangeNotifier {
   }
 
   set uploadingFile(bool value) {
+    // loader for uploading file 
     _uploadingFile = value;
     notifyListeners();
   }
@@ -82,14 +90,15 @@ class DriveUploadProvider extends ChangeNotifier {
 
   void _filterFiles() {
     if (_selectedCategories.isEmpty && _searchQuery.isEmpty) {
-      _filteredFiles = _uploadedFiles;
+      _filteredFiles = _readFiles;
     } else {
-      _filteredFiles = _uploadedFiles.where((file) {
+      _filteredFiles = _readFiles.where((file) {
         final filenameMatch =
             file.filename.toLowerCase().contains(_searchQuery.toLowerCase());
-        final fileTypeMatch = _selectedCategories.isEmpty ||
-            _selectedCategories.contains(file.fileType.toLowerCase());
-        return filenameMatch && fileTypeMatch;
+        final filetypeMatch = _selectedCategories.isEmpty ||
+            _selectedCategories
+                .contains(determineFiletype(file.filename).toLowerCase());
+        return filenameMatch && filetypeMatch;
       }).toList();
     }
     notifyListeners();
@@ -97,6 +106,8 @@ class DriveUploadProvider extends ChangeNotifier {
 
   Future<void> fetchUploadedFiles() async {
     try {
+      _isLoading = true;
+      notifyListeners();
       final response = await http.post(
         Uri.parse(
             'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountUploadedSharedFiles'),
@@ -113,11 +124,9 @@ class DriveUploadProvider extends ChangeNotifier {
 
         final dynamic data = jsonDecode(cleanedResponse);
 
-        // print({'_uploadedFiles',data});
         if (data is List) {
-          _uploadedFiles.clear();
-          _uploadedFiles
-              .addAll(data.map((file) => UploadedFile.fromJson(file)));
+          _readFiles.clear();
+          _readFiles.addAll(data.map((file) => UploadedFile.fromJson(file)));
           _filterFiles();
           notifyListeners();
         } else {
@@ -128,6 +137,9 @@ class DriveUploadProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Error fetching uploaded files: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -147,32 +159,32 @@ class DriveUploadProvider extends ChangeNotifier {
     }
   }
 
-  static String determineFileType(String filename) {
+  String determineFiletype(String filename) {
     if (filename.toLowerCase().endsWith('.pdf')) {
-      return 'pdf';
+      return 'Pdf';
     } else if (filename.toLowerCase().endsWith('.doc') ||
         filename.toLowerCase().endsWith('.docx')) {
-      return 'word';
+      return 'Word';
     } else if (filename.toLowerCase().endsWith('.xls') ||
         filename.toLowerCase().endsWith('.xlsx')) {
-      return 'excel';
+      return 'Excel';
     } else if (filename.toLowerCase().endsWith('.mp3') ||
         filename.toLowerCase().endsWith('.wav') ||
         filename.toLowerCase().endsWith('.ogg')) {
-      return 'audio';
+      return 'Audio';
     } else if (filename.toLowerCase().endsWith('.mp4') ||
         filename.toLowerCase().endsWith('.avi') ||
         filename.toLowerCase().endsWith('.mkv')) {
-      return 'video';
+      return 'Video';
     } else if (filename.toLowerCase().endsWith('.zip')) {
-      return 'zip';
+      return 'Zip';
     } else if (filename.toLowerCase().endsWith('.jpg') ||
         filename.toLowerCase().endsWith('.jpeg') ||
         filename.toLowerCase().endsWith('.gif') ||
         filename.toLowerCase().endsWith('.png')) {
-      return 'image';
+      return 'Image';
     } else {
-      return 'document';
+      return 'Document';
     }
   }
 
@@ -190,13 +202,10 @@ class DriveUploadProvider extends ChangeNotifier {
   Future<void> accountUploadFiles(BuildContext context) async {
     try {
       List<Map<String, dynamic>> fileUploads = _uploadedFiles.map((file) {
-        // print({
-        //   'description': file.filename,
-        // });
         return {
           'filename': file.filename,
           'fileextension': '.${file.fileExtension}',
-          'filetype': file.fileType.toUpperCase(),
+          'filetype': file.filetype,
           'description': file.description,
           'filebase64': file.filebase64.toString(),
         };
@@ -233,43 +242,39 @@ class DriveUploadProvider extends ChangeNotifier {
       return;
     }
     try {
-      uploadingFile = true;
-      notifyListeners();
       final Uint8List bytes = _selectedFile!.bytes!;
       final String filename = _selectedFile!.name;
-      // final String description = _description ?? '';
       int fileSize = _selectedFile!.size;
+      String base64String = base64Encode(bytes);
       if (fileSize > 50 * 1024 * 1024) {
         uploadingFile = false;
         showFileSizeAlert(context);
       } else {
-        // String formattedSize = formatFileSize(fileSize);
-        String fileType = UploadedFile.determineFileType(filename);
-        String base64String = base64Encode(bytes);
-        final uploadedFile = UploadedFile(
+        uploadingFile = true;
+        final newUploadedFile = UploadedFile(
           accountcode: '',
           filecode: '',
           filename: filename,
-          fileExtension: filename.split('.').last,
-          fileType: fileType,
-          // fileSize: formattedSize,
           description: fileDescpController.text,
+          sharedfrom: '',
+          uploadedby: '',
+          uploadeddate:
+              DateFormat('MM-dd-yyyy').format(DateTime.now()).toString(),
+          fileurl: '',
+          fileExtension: filename.split('.').last,
+          filetype: selectedFileType,
           filebase64: base64String,
-          // uploadDate:
-          //     DateFormat('MM-dd-yyyy').format(DateTime.now()).toString(),
         );
-        _selectedFile = null;
-        // _description = '';
-        _uploadedFiles.add(uploadedFile);
-        accountUploadFiles(context);
-
-        hideForm();
-
+        _uploadedFiles.add(newUploadedFile);
+        await accountUploadFiles(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('File uploaded successfully.'),
           ),
         );
+        hideForm();
+        fetchUploadedFiles();
+        resetForm();
       }
     } catch (error) {
       print('Error uploading file: $error');
@@ -336,7 +341,7 @@ class DriveUploadProvider extends ChangeNotifier {
                 TextButton(
                   style: buttonStyleRed,
                   onPressed: () {
-                    deleteFile(file);
+                    deleteAdvisorDriveFiles(file.accountcode, file.filecode);
                     Navigator.pop(context);
                   },
                   child: const Text(
@@ -352,11 +357,12 @@ class DriveUploadProvider extends ChangeNotifier {
     );
   }
 
-  void showShareDialog(BuildContext context) async {
+  void showShareDialog(
+      BuildContext context, String filecode, String accountcode) async {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorDriveAccountShareDetails'),
+            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountShareDetails'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "accountcode": "AC-20231206063617013",
@@ -420,7 +426,7 @@ class DriveUploadProvider extends ChangeNotifier {
                         child: ElevatedButton(
                           style: buttonStyleGreen,
                           onPressed: () {
-                            sharesharingEmails();
+                            sharesharingEmails(filecode, accountcode);
                             Navigator.pop(context);
                           },
                           child: const Text(
@@ -444,13 +450,14 @@ class DriveUploadProvider extends ChangeNotifier {
     }
   }
 
-  void sharesharingEmails() async {
+  void sharesharingEmails(String filecode, String accountcode) async {
     try {
       List<Map<String, dynamic>> sharePayload =
-          _selectedAccountCode.map((accountCode) {
+          _selectedAccountCode.map((toAccountCode) {
         return {
-          "accountcode": accountCode,
-          "filecode": 'FC-20231219062805112',
+          "toaccountcode": toAccountCode,
+          "fromaccountcode": accountcode,
+          "filecode": filecode,
           "isfileshare": 1,
           "loggedinuser": "system"
         };
@@ -475,7 +482,6 @@ class DriveUploadProvider extends ChangeNotifier {
 
   Future<void> deleteAdvisorDriveFiles(
       String accountCode, String fileCode) async {
-    // print({'api deletee--', accountCode});
     try {
       final response = await http.post(
         Uri.parse(
@@ -489,7 +495,8 @@ class DriveUploadProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200) {
         print('File deleted successfully');
-        _uploadedFiles.removeWhere((file) => file.filecode == fileCode);
+        _readFiles.removeWhere((file) => file.filecode == fileCode);
+        fetchUploadedFiles();
         notifyListeners();
       } else {
         print('Failed to delete file: ${response.statusCode}');
@@ -498,13 +505,6 @@ class DriveUploadProvider extends ChangeNotifier {
     } catch (e) {
       print('Error deleting file: $e');
     }
-  }
-
-  void deleteFile(UploadedFile file) {
-    print({'object deletee--', file.filename, file.filecode, file.accountcode});
-
-    deleteAdvisorDriveFiles(file.accountcode, file.filecode);
-    notifyListeners();
   }
 
   void resetForm() {
@@ -523,8 +523,9 @@ class DriveUploadProvider extends ChangeNotifier {
 
   void _clearForm() {
     if (_uploadedFiles.isNotEmpty) {
-      // _description = '';
+      _selectedFile = null;
       fileDescpController.clear();
+      selectedFileType = 'DOC';
     }
   }
 

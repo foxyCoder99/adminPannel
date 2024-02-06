@@ -1,4 +1,3 @@
-
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:advisorapp/providers/driveupload_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DriveUpload extends StatelessWidget {
   const DriveUpload({Key? key}) : super(key: key);
@@ -170,102 +170,129 @@ class DriveUpload extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16.0),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text('File Name')),
-                    DataColumn(label: Text('File Type')),
-                    // DataColumn(label: Text('File Size')),
-                    // DataColumn(label: Text('Upload Date')),
-                    DataColumn(label: Text('Action')),
-                  ],
-                  rows: driveUploadProvider.filteredFiles.isNotEmpty
-                      ? driveUploadProvider.filteredFiles.map((file) {
-                          // print({'driveUploadProvider.filteredFiles--',file.filename,file.filecode,file.accountcode});
-                          return DataRow(
-                            cells: [
-                              DataCell(
-                                Row(
-                                  children: [
-                                    _getIconForFileType(file.fileType),
-                                    const SizedBox(width: 8),
-                                    SizedBox(
-                                      width: SizeConfig.screenWidth / 4,
-                                      child: Text(
-                                        file.filename,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              DataCell(Text(file.fileType)),
-                              // DataCell(Text(file.fileSize)),
-                              // DataCell(Text(file.uploadDate)),
-                              DataCell(
-                                PopupMenuButton(
-                                  itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry>[
-                                    PopupMenuItem(
-                                      child: const ListTile(
-                                        title: Text('Delete'),
-                                        leading: Icon(Icons.delete),
-                                      ),
-                                      onTap: () {
-                                        driveUploadProvider
-                                            .showDeleteConfirmationDialog(
-                                                context, file);
-                                      },
-                                    ),
-                                    PopupMenuItem(
-                                      child: const ListTile(
-                                        title: Text('Share'),
-                                        leading: Icon(
-                                          Icons.share,
+            if (driveUploadProvider.isLoading)
+              const Center(child: CircularProgressIndicator())
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('File Name')),
+                        DataColumn(label: Text('File Type')),
+                        DataColumn(label: Text('Description')),
+                        DataColumn(label: Text('Upload Date')),
+                        DataColumn(label: Text('Action/Shared From')),
+                        DataColumn(label: Text('')),
+                      ],
+                      rows: driveUploadProvider.filteredFiles.isNotEmpty
+                          ? driveUploadProvider.filteredFiles.map((file) {
+                              // print({
+                              //   'file--',
+                              //   file.fileurl,
+                              //   '----',
+                              //   file.filename
+                              // });
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        _getIconForFiletype(driveUploadProvider
+                                            .determineFiletype(file.filename)),
+                                        const SizedBox(width: 8),
+                                        SizedBox(
+                                          width: SizeConfig.screenWidth / 4,
+                                          child: Text(
+                                            file.filename,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
-                                      ),
-                                      onTap: () {
-                                        driveUploadProvider
-                                            .showShareDialog(context);
-                                      },
+                                      ],
                                     ),
-                                  ],
-                                  offset: const Offset(0, 40),
-                                  child: const Icon(Icons.more_vert),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList()
-                      : [
-                          const DataRow(
-                            cells: [
-                              DataCell(
-                                SizedBox(
-                                  width: 300,
-                                  child: Center(
-                                    child: Text(
-                                      'Please Upload File',
-                                      style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        color: Colors.grey,
+                                  ),
+                                  DataCell(Text(file.filetype)),
+                                  DataCell(Text(file.description)),
+                                  DataCell(Text(file.uploadeddate)),
+                                  DataCell(file.sharedfrom.toString() == ''
+                                      ? PopupMenuButton(
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry>[
+                                            PopupMenuItem(
+                                              child: const ListTile(
+                                                title: Text('Delete'),
+                                                leading: Icon(Icons.delete),
+                                              ),
+                                              onTap: () {
+                                                driveUploadProvider
+                                                    .showDeleteConfirmationDialog(
+                                                        context, file);
+                                              },
+                                            ),
+                                            PopupMenuItem(
+                                              child: const ListTile(
+                                                title: Text('Share'),
+                                                leading: Icon(
+                                                  Icons.share,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                driveUploadProvider
+                                                    .showShareDialog(
+                                                        context,
+                                                        file.filecode,
+                                                        file.accountcode);
+                                              },
+                                            ),
+                                          ],
+                                          offset: const Offset(0, 40),
+                                          child: const Icon(Icons.more_vert),
+                                        )
+                                      : Text(file.sharedfrom)),
+                                  DataCell(
+                                    ElevatedButton(
+                                      style: buttonStyleInvite,
+                                      onPressed: () {
+                                        launchUrl(Uri.parse(file.fileurl));
+                                      },
+                                      child: const Text('View',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList()
+                          : [
+                              const DataRow(
+                                cells: [
+                                  DataCell(
+                                    SizedBox(
+                                      child: Center(
+                                        child: Text(
+                                          'Please Upload File',
+                                          style: TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                  DataCell(SizedBox()),
+                                  DataCell(SizedBox()),
+                                  DataCell(SizedBox()),
+                                  DataCell(SizedBox()),
+                                  DataCell(SizedBox()),
+                                ],
                               ),
-                              DataCell(SizedBox()),
-                              // DataCell(SizedBox()),
-                              // DataCell(SizedBox()),
-                              DataCell(SizedBox()),
                             ],
-                          ),
-                        ],
+                    ),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -283,99 +310,126 @@ class DriveUpload extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8.0),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+              padding: const EdgeInsets.symmetric(
+                vertical: defaultPadding,
+                horizontal: defaultPadding,
+              ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(
-                    Icons.attach_file,
-                    color: AppColors.secondary,
-                  ),
-                  const SizedBox(width: 16),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        // Text(
-                        //   'Choose File:',
-                        //   style: TextStyle(
-                        //     fontWeight: FontWeight.bold,
-                        //     fontSize: 16,
-                        //   ),
-                        // ),
-                        // const SizedBox(height: 4),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: AppColors.sidemenu,
+                        const Icon(
+                          Icons.attach_file,
+                          color: AppColors.secondary,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.sidemenu,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Padding(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0),
-                                    child: Text(
-                                      driveUploadProvider.selectedFile != null
-                                          ? driveUploadProvider
-                                              .selectedFile!.name
-                                          : 'No file chosen',
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: TextButton(
-                                    style: ElevatedButton.styleFrom(
-                                        elevation: 4,
-                                        shadowColor:
-                                            Colors.grey.withOpacity(0.5),
-                                        backgroundColor: AppColors.iconGray,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        )),
-                                    onPressed: () async {
-                                      FilePickerResult? result =
-                                          await FilePickerWeb.platform
-                                              .pickFiles(
-                                        type: FileType.any,
-                                        allowMultiple: false,
-                                      );
-                                      if (result != null) {
-                                        PlatformFile file = result.files.single;
-                                        driveUploadProvider
-                                            .setSelectedFile(file);
-                                      } else {
-                                        print('User canceled file picker');
-                                      }
-                                    },
-                                    child: const Text(
-                                      'Browse Files',
-                                      style: TextStyle(
-                                        color: Colors.white,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints.loose(
+                                          const Size.fromWidth(150)),
+                                      child: Text(
+                                        driveUploadProvider.selectedFile != null
+                                            ? driveUploadProvider
+                                                .selectedFile!.name
+                                            : 'No file chosen...',
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: TextButton(
+                                      style: ElevatedButton.styleFrom(
+                                          elevation: 4,
+                                          shadowColor:
+                                              Colors.grey.withOpacity(0.5),
+                                          backgroundColor: AppColors.iconGray,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          )),
+                                      onPressed: () async {
+                                        FilePickerResult? result =
+                                            await FilePickerWeb.platform
+                                                .pickFiles(
+                                          type: FileType.any,
+                                          allowMultiple: false,
+                                        );
+                                        if (result != null) {
+                                          PlatformFile file =
+                                              result.files.single;
+                                          driveUploadProvider
+                                              .setSelectedFile(file);
+                                        } else {
+                                          print('User canceled file picker');
+                                        }
+                                      },
+                                      child: const Text(
+                                        'Browse Files',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      value: driveUploadProvider.selectedFileType,
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'DOC',
+                          child: Text('Document'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'AV',
+                          child: Text('Audio/Video'),
+                        ),
+                      ],
+                      onChanged: (newValue) {
+                        driveUploadProvider.selectedFileType = newValue ?? '';
+                      },
+                      decoration: CustomTextDecoration.textDecoration(
+                        'File Type',
+                        const Icon(
+                          Icons.video_file,
+                          color: AppColors.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 8.0),
             Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: defaultPadding,
@@ -396,7 +450,7 @@ class DriveUpload extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -447,145 +501,6 @@ class DriveUpload extends StatelessWidget {
     );
   }
 
-  // Widget _buildUploadForm(
-  //     BuildContext context, DriveUploadProvider driveUploadProvider) {
-  //   return SizedBox(
-  //     width: SizeConfig.screenWidth / 2,
-  //     child: Form(
-  //       key: driveUploadProvider.formKey,
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           const SizedBox(height: 8.0),
-  //           GestureDetector(
-  //             onTap: () async {
-  //               FilePickerResult? result =
-  //                   await FilePickerWeb.platform.pickFiles(
-  //                 type: FileType.any,
-  //                 allowMultiple: false,
-  //               );
-  //               if (result != null) {
-  //                 PlatformFile file = result.files.single;
-  //                 driveUploadProvider.setSelectedFile(file);
-  //               } else {
-  //                 print('User canceled file picker');
-  //               }
-  //             },
-  //             child: Padding(
-  //               padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-  //               child: Row(
-  //                 mainAxisSize: MainAxisSize.max,
-  //                 children: [
-  //                   const Icon(
-  //                     Icons.attach_file,
-  //                     color: AppColors.secondary,
-  //                   ),
-  //                   Expanded(
-  //                     child: Padding(
-  //                       padding: const EdgeInsets.fromLTRB(
-  //                         16,
-  //                         0,
-  //                         0,
-  //                         0,
-  //                       ),
-  //                       child: Container(
-  //                         decoration: const BoxDecoration(
-  //                             color: AppColors.sidemenu,
-  //                             border: Border(
-  //                               bottom: BorderSide(color: Colors.black),
-  //                             ),
-  //                             borderRadius: BorderRadius.only(
-  //                                 topLeft: Radius.circular(5),
-  //                                 topRight: Radius.circular(5))),
-  //                         child: Padding(
-  //                           padding: const EdgeInsets.symmetric(
-  //                             horizontal: defaultPadding,
-  //                             vertical: defaultPadding,
-  //                           ),
-  //                           child: Text(
-  //                             driveUploadProvider.selectedFile != null
-  //                                 ? driveUploadProvider.selectedFile!.name
-  //                                 : 'Choose File',
-  //                             style: const TextStyle(fontSize: 16),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           const SizedBox(height: 8.0),
-  //           Padding(
-  //             padding: const EdgeInsets.symmetric(
-  //                 vertical: defaultPadding, horizontal: defaultPadding),
-  //             child: TextFormField(
-  //               controller: driveUploadProvider.fileDescpController,
-  //               maxLines: null,
-  //               keyboardType: TextInputType.multiline,
-  //               textInputAction: TextInputAction.next,
-  //               cursorColor: kPrimaryColor,
-  //               decoration: CustomTextDecoration.textDecoration(
-  //                 'File Description',
-  //                 const Icon(
-  //                   Icons.description,
-  //                   color: AppColors.secondary,
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           const SizedBox(height: 8.0),
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //             children: [
-  //               ElevatedButton(
-  //                 style: buttonStyleGreen,
-  //                 onPressed: () {
-  //                   driveUploadProvider.formKey.currentState?.validate();
-  //                   if (driveUploadProvider.formKey.currentState?.validate() ??
-  //                       false) {
-  //                     if (driveUploadProvider.selectedFile != null) {
-  //                       driveUploadProvider.uploadFile(context);
-  //                     } else {
-  //                       ScaffoldMessenger.of(context).showSnackBar(
-  //                         const SnackBar(
-  //                           content: Text('Please choose a file to upload.'),
-  //                         ),
-  //                       );
-  //                     }
-  //                   }
-  //                 },
-  //                 child: driveUploadProvider.uploadingFile
-  //                     ? const SizedBox(
-  //                         width: 20,
-  //                         height: 20,
-  //                         child: CircularProgressIndicator(
-  //                           valueColor:
-  //                               AlwaysStoppedAnimation<Color>(Colors.white),
-  //                         ),
-  //                       )
-  //                     : const Text('Upload',
-  //                         style: TextStyle(color: Colors.white)),
-  //               ),
-  //               const SizedBox(width: 16.0),
-  //               ElevatedButton(
-  //                 style: buttonStyleBlue,
-  //                 onPressed: () {
-  //                   driveUploadProvider.cancelmenuForm(context);
-  //                 },
-  //                 child: const Text('Cancel',
-  //                     style: TextStyle(color: Colors.white)),
-  //               ),
-  //             ],
-  //           ),
-  //           const SizedBox(height: 16.0),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildCategoryButton(BuildContext context,
       DriveUploadProvider driveUploadProvider, String category) {
     final isSelected =
@@ -611,7 +526,7 @@ class DriveUpload extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(2.0),
-            child: _getIconForFileType(category),
+            child: _getIconForFiletype(category),
           ),
           Text(
             category.toUpperCase(),
@@ -622,8 +537,8 @@ class DriveUpload extends StatelessWidget {
     );
   }
 
-  Icon _getIconForFileType(String fileType) {
-    switch (fileType.toLowerCase()) {
+  Icon _getIconForFiletype(String filetype) {
+    switch (filetype.toLowerCase()) {
       case 'image':
         return const Icon(
           FontAwesomeIcons.image,

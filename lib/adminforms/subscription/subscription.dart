@@ -111,7 +111,6 @@ class SubscriptionFormPage extends StatelessWidget {
               child: DropdownButtonFormField(
                 value: subscriptionProvider.selectedType,
                 items: subscriptionProvider.types.map((type) {
-                  // print({'type', type});
                   return DropdownMenuItem(
                     value: type,
                     child: Text(type),
@@ -167,7 +166,6 @@ class SubscriptionFormPage extends StatelessWidget {
                     child: DropdownButtonFormField(
                       value: subscriptionProvider.selectedPriceunit,
                       items: subscriptionProvider.priceunits.map((priceunit) {
-                        // print({'priceunit', priceunit});
                         return DropdownMenuItem(
                           value: priceunit,
                           child: Text(priceunit),
@@ -226,7 +224,6 @@ class SubscriptionFormPage extends StatelessWidget {
                       value: subscriptionProvider.selectedDisplayPeriodUnit,
                       items: subscriptionProvider.displayPeriodunits
                           .map((periodunit) {
-                        // print({'periodunit', periodunit});
                         return DropdownMenuItem(
                           value: periodunit,
                           child: Text(periodunit),

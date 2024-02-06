@@ -100,7 +100,6 @@ class RoleProvider extends ChangeNotifier {
     BuildContext context,
     String rolename,
   ) async {
-    print({'insert rolename', rolename});
     final response = await http.post(
       Uri.parse(
           "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorAdminRoleM"),

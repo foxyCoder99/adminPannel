@@ -97,8 +97,6 @@ class MenuAccessProvider extends ChangeNotifier {
     try {
       final List menuList = menus.map((menu) => menu.toJson()).toList();
 
-      print({'menu list', menuList});
-
       final response = await http.post(
         Uri.parse(
             "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminMenuAccess"),

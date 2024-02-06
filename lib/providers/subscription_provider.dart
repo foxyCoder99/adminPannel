@@ -356,7 +356,6 @@ class SubscriptionProvider extends ChangeNotifier {
   }
 
   void updateSubscription(Subscription newSubscription, int index) {
-    print({'--- updateSubscription -- '});
     if (index >= 0 && index < _subscriptionList.length) {
       _subscriptionList[index] = newSubscription;
       _isFormVisible = false;
