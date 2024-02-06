@@ -33,7 +33,7 @@ class EmpActionPage extends StatelessWidget {
       }
       // Save the Excel file
       var filePath = 'empaction_data.xlsx'; // Adjust file path as needed
-      await excel.save(fileName: filePath);
+      excel.save(fileName: filePath);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Excel file saved at: $filePath'),

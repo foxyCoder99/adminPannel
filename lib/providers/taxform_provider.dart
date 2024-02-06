@@ -165,20 +165,20 @@ class TaxProvider extends ChangeNotifier {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Confirm Deletion'),
-            content: Text('Are you sure you want to delete this tax?'),
+            title: const Text('Confirm Deletion'),
+            content: const Text('Are you sure you want to delete this tax?'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(false); // User chose not to delete
                 },
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(true); // User confirmed deletion
                 },
-                child: Text('Delete'),
+                child: const Text('Delete'),
               ),
             ],
           );
@@ -231,7 +231,7 @@ class TaxProvider extends ChangeNotifier {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );

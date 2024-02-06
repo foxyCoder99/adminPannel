@@ -72,7 +72,7 @@ class AccountInvitation extends StatelessWidget {
         onChanged: (value) {
           accountInvitationProvider.setSearchTerm(value);
         },
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'Search by account name or email',
           prefixIcon: Icon(Icons.search),
         ),

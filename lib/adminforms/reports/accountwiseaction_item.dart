@@ -237,12 +237,12 @@ class AccountActionItem extends StatelessWidget {
 // Custom CheckBox widget
 class CustomCheckBox extends StatelessWidget {
   final String value;
-  const CustomCheckBox({required this.value});
+  const CustomCheckBox({super.key, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return value == 'Y'
-        ? Icon(Icons.check, color: Colors.green)
-        : Icon(Icons.close, color: Colors.red);
+        ? const Icon(Icons.check, color: Colors.green)
+        : const Icon(Icons.close, color: Colors.red);
   }
 }

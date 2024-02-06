@@ -78,7 +78,7 @@ class TaxFormpage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Center(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +94,7 @@ class TaxFormpage extends StatelessWidget {
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
-                            SizedBox(width: 16.0),
+                            const SizedBox(width: 16.0),
                             ElevatedButton(
                               style: buttonStyleBlue,
                               onPressed: taxProvider.hideForm,
@@ -126,7 +126,7 @@ class TaxFormpage extends StatelessWidget {
                         DataCell(Text(tax.taxName)),
                         DataCell(Text(tax.taxValue.toString())),
                         DataCell(IconButton(
-                          icon: Icon(Icons.edit),
+                          icon: const Icon(Icons.edit),
                           onPressed: () {
                             taxProvider.setSelectedTaxId(tax.id);
                             taxProvider.showForm();
@@ -137,7 +137,7 @@ class TaxFormpage extends StatelessWidget {
                           },
                         )),
                         DataCell(IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () {
                             String taxId = tax.id.toString();
                             taxProvider.deletetax(context, taxId);

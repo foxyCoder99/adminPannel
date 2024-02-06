@@ -38,7 +38,7 @@ class AccountPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Padding(
             padding: const EdgeInsets.all(16.0),

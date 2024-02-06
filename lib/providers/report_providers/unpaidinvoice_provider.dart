@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class UnpaidInvoiceProvider extends ChangeNotifier {
   final List<UnpaidInvoice> _invoiceList = [];
   List<UnpaidInvoice> get invoiceList => _invoiceList;
-  String _searchQuery = '';
+  final String _searchQuery = '';
   String get searchQuery => _searchQuery;
 
   UnpaidInvoiceProvider() {

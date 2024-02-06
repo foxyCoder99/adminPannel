@@ -106,10 +106,10 @@ class UserProvider extends ChangeNotifier {
           if (roleResponse.statusCode == 200) {
             final roleData = jsonDecode(roleResponse.body);
             if (roleData is List) {
-              roleData.forEach((element) {
+              for (var element in roleData) {
                 _userRoleCode.addAll([element["rolecode"]]);
                 userRoles.addAll([element["rolename"]]);
-              });
+              }
             } else {
               print(
                   "Error parsing role list. Expected a list, but got: $roleData");

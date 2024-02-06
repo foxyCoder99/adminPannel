@@ -58,7 +58,7 @@ class MenuAccessPage extends StatelessWidget {
   }
 
   Widget _buildRoleDropdown(MenuAccessProvider menuAccessProvider) {
-    Set<String> uniqueRoleValues = Set<String>();
+    Set<String> uniqueRoleValues = <String>{};
     return SizedBox(
       width: SizeConfig.screenWidth / 3,
       child: DropdownButtonFormField(
