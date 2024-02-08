@@ -41,7 +41,7 @@ class MenuAccessPage extends StatelessWidget {
                       style: buttonStyleBlue,
                       onPressed: () {
                         if (menuAccessProvider.menuList.isNotEmpty) {
-                          menuAccessProvider.updateCheckedMenus(context);
+                          // menuAccessProvider.updateCheckedMenus(context);
                         }
                       },
                       child: const Text('Update',
@@ -132,6 +132,7 @@ class MenuAccessPage extends StatelessWidget {
                   child: Checkbox(
                     value: menu.trxnaccess,
                     onChanged: (value) {
+                    
                       menuAccessProvider.updatetrxnaccess(menu, value ?? false);
                     },
                   ),

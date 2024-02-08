@@ -7,6 +7,7 @@ import 'package:advisorapp/models/admin/upload_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DriveUploadProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -14,16 +15,15 @@ class DriveUploadProvider extends ChangeNotifier {
 
   final List<UploadedFile> _uploadedFiles = [];
   final List<UploadedFile> _readFiles = [];
+  final List<ShareMail> _readEmails = [];
   List<UploadedFile> _filteredFiles = [];
-  final List<ShareMail> _sharingEmails = [];
+  List<ShareMail> trueShareEmails = [];
 
   String _searchQuery = '';
   String selectedFileType = 'DOC';
   TextEditingController emailController = TextEditingController();
   TextEditingController fileDescpController = TextEditingController();
 
-  final Set<String> _selectedEmailIds = {};
-  final Set<String> _selectedAccountCode = {};
   final Set<String> _selectedCategories = {};
 
   bool _searchFocused = false;
@@ -32,8 +32,6 @@ class DriveUploadProvider extends ChangeNotifier {
   bool _isLoading = false;
 
   PlatformFile? get selectedFile => _selectedFile;
-  Set<String> get selectedAccountCode => _selectedAccountCode;
-  Set<String> get selectedEmailIds => _selectedEmailIds;
   Set<String> get selectedCategories => _selectedCategories;
 
   String get searchQuery => _searchQuery;
@@ -42,9 +40,9 @@ class DriveUploadProvider extends ChangeNotifier {
   bool get uploadingFile => _uploadingFile;
   bool get searchFocused => _searchFocused;
 
-  List<ShareMail> get sharingEmails => _sharingEmails;
   List<UploadedFile> get uploadedFiles => _uploadedFiles;
   List<UploadedFile> get readFiles => _readFiles;
+  List<ShareMail> get readEmails => _readEmails;
   List<UploadedFile> get filteredFiles => _filteredFiles;
 
   void resetSearchQuery() {
@@ -56,19 +54,18 @@ class DriveUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSelectedEmail(SelectedEmail email) {
-    if (_selectedEmailIds.contains(email.emailId)) {
-      _selectedEmailIds.remove(email.emailId);
-      _selectedAccountCode.remove(email.accountcode);
+  void toggleSelectedEmail(ShareMail email, bool value) {
+
+    email.fileshare = value;
+    if (value) {
+      trueShareEmails.add(email);
     } else {
-      _selectedEmailIds.add(email.emailId);
-      _selectedAccountCode.add(email.accountcode);
+      trueShareEmails.remove(email);
     }
     notifyListeners();
   }
 
   set uploadingFile(bool value) {
-    // loader for uploading file 
     _uploadingFile = value;
     notifyListeners();
   }
@@ -113,6 +110,7 @@ class DriveUploadProvider extends ChangeNotifier {
             'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountUploadedSharedFiles'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
+          // "accountcode": "AC-20231206095313303",
           "accountcode": "AC-20231206063617013",
           "fromdate": "01/01/2022",
           "todate": "03/31/2024"
@@ -128,6 +126,7 @@ class DriveUploadProvider extends ChangeNotifier {
           _readFiles.clear();
           _readFiles.addAll(data.map((file) => UploadedFile.fromJson(file)));
           _filterFiles();
+          // fetchSharingEmails();
           notifyListeners();
         } else {
           print("Error parsing file list. Expected a list, but got: $data");
@@ -140,6 +139,39 @@ class DriveUploadProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> fetchSharingEmails(String filecode, String accountcode) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountShareDetails'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "accountcode": accountcode,
+          "filecode": filecode,
+          "fromdate": "01/01/2022",
+          "todate": "01/12/2024"
+        }),
+      );
+      if (response.statusCode == 200) {
+        final cleanedResponse =
+            response.body.replaceAll(RegExp(r'[\u0000-\u001F]'), '');
+
+        final dynamic data = jsonDecode(cleanedResponse);
+        if (data is List) {
+          _readEmails.clear();
+          _readEmails.addAll(data.map((email) => ShareMail.fromJson(email)));
+          notifyListeners();
+        } else {
+          print("Error parsing Emails list. Expected a list, but got: $data");
+        }
+      } else {
+        print('Failed to fetch Emails: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching Emails: $e');
     }
   }
 
@@ -211,7 +243,8 @@ class DriveUploadProvider extends ChangeNotifier {
         };
       }).toList();
       Map<String, dynamic> payload = {
-        'accountcode': 'AC-20230111154731090',
+        'accountcode': 'AC-20231206063617013',
+        // 'accountcode': 'AC-20231206095313303',
         'loggedinuser': 'system',
         'fileupload': fileUploads,
       };
@@ -360,105 +393,93 @@ class DriveUploadProvider extends ChangeNotifier {
   void showShareDialog(
       BuildContext context, String filecode, String accountcode) async {
     try {
-      final response = await http.post(
-        Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountShareDetails'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "accountcode": "AC-20231206063617013",
-          "fromdate": "01/01/2022",
-          "todate": "01/12/2024"
-        }),
-      );
-      if (response.statusCode == 200) {
-        final cleanedResponse =
-            response.body.replaceAll(RegExp(r'[\u0000-\u001F]'), '');
-
-        final dynamic data = jsonDecode(cleanedResponse);
-
-        if (data is List) {
-          _sharingEmails.clear();
-          _sharingEmails
-              .addAll(data.map((emails) => ShareMail.fromJson(emails)));
-          notifyListeners();
-        } else {
-          print("Error parsing Emails list. Expected a list, but got: $data");
+      await fetchSharingEmails(filecode, accountcode);
+      for (ShareMail email in readEmails) {
+        if (email.fileshare) {
+          trueShareEmails.add(email);
         }
-
-        // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Share File'),
-              content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: SizeConfig.screenWidth / 3,
-                          height: SizeConfig.screenHeight / 5,
-                          child: ListView.builder(
-                            itemCount: sharingEmails.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final email = sharingEmails[index];
-                              final selectedEmail = SelectedEmail(
-                                  email.emailid, email.accountcode);
-                              return CheckboxListTile(
-                                title: Text(email.accountname),
-                                subtitle: Text(email.emailid),
-                                value: selectedEmailIds.contains(email.emailid),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    toggleSelectedEmail(selectedEmail);
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Center(
-                        child: ElevatedButton(
-                          style: buttonStyleGreen,
-                          onPressed: () {
-                            sharesharingEmails(filecode, accountcode);
-                            Navigator.pop(context);
-                          },
-                          child: const Text(
-                            'Share',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            );
-          },
-        );
-      } else {
-        print('Failed to fetch emails: ${response.statusCode}');
       }
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Share File'),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    width: SizeConfig.screenWidth / 3,
+                    height: SizeConfig.screenHeight / 5,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(2.0),
+                      itemCount: readEmails.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final email = readEmails[index];
+                        return Consumer<DriveUploadProvider>(
+                            builder: (context, driveUploadProvider, _) { 
+                          return CheckboxListTile(
+                              title: Text(email.accountname),
+                              subtitle: Text(email.emailid),
+                              value: email.fileshare,
+                              onChanged: (value) {
+                                driveUploadProvider.toggleSelectedEmail(
+                                    email, value ?? false);
+                              });
+                        });
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      style: buttonStyleGreen,
+                      onPressed: () {
+                        sharesharingEmails(filecode, accountcode);
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Share',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: buttonStyleRed,
+                      onPressed: () {
+                        Navigator.pop(context); // Close the dialog
+                      },
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      );
     } catch (e) {
-      print('Error fetching emails: $e');
+      print('Error reading share Emails: $e');
     }
   }
 
-  void sharesharingEmails(String filecode, String accountcode) async {
+  Future<void> sharesharingEmails(String filecode, String accountcode) async {
     try {
-      List<Map<String, dynamic>> sharePayload =
-          _selectedAccountCode.map((toAccountCode) {
+      List<Map<String, dynamic>> sharePayload = trueShareEmails.map((email) {
         return {
-          "toaccountcode": toAccountCode,
+          "toaccountcode": email.accountcode,
           "fromaccountcode": accountcode,
           "filecode": filecode,
-          "isfileshare": 1,
+          "fileshare": 1,
           "loggedinuser": "system"
         };
       }).toList();
@@ -524,6 +545,8 @@ class DriveUploadProvider extends ChangeNotifier {
   void _clearForm() {
     if (_uploadedFiles.isNotEmpty) {
       _selectedFile = null;
+
+      _uploadedFiles.clear();
       fileDescpController.clear();
       selectedFileType = 'DOC';
     }

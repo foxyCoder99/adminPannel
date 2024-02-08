@@ -184,84 +184,85 @@ class DriveUpload extends StatelessWidget {
                         DataColumn(label: Text('File Type')),
                         DataColumn(label: Text('Description')),
                         DataColumn(label: Text('Upload Date')),
-                        DataColumn(label: Text('Action/Shared From')),
-                        DataColumn(label: Text('')),
+                        DataColumn(label: Text('Action')),
                       ],
                       rows: driveUploadProvider.filteredFiles.isNotEmpty
                           ? driveUploadProvider.filteredFiles.map((file) {
-                              // print({
-                              //   'file--',
-                              //   file.fileurl,
-                              //   '----',
-                              //   file.filename
-                              // });
                               return DataRow(
                                 cells: [
                                   DataCell(
-                                    Row(
-                                      children: [
-                                        _getIconForFiletype(driveUploadProvider
-                                            .determineFiletype(file.filename)),
-                                        const SizedBox(width: 8),
-                                        SizedBox(
-                                          width: SizeConfig.screenWidth / 4,
-                                          child: Text(
-                                            file.filename,
-                                            overflow: TextOverflow.ellipsis,
+                                    InkWell(
+                                      onTap: () {
+                                        if (file.fileurl.isNotEmpty) {
+                                          launchUrl(Uri.parse(file.fileurl));
+                                        }
+                                      },
+                                      child: Row(
+                                        children: [
+                                          _getIconForFiletype(
+                                              driveUploadProvider
+                                                  .determineFiletype(
+                                                      file.filename)),
+                                          const SizedBox(width: 8),
+                                          SizedBox(
+                                            width: SizeConfig.screenWidth / 4,
+                                            child: Text(
+                                              file.filename,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                decoration: file
+                                                        .fileurl.isNotEmpty
+                                                    ? TextDecoration.underline
+                                                    : TextDecoration.none,
+                                                color: Colors.black,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   DataCell(Text(file.filetype)),
                                   DataCell(Text(file.description)),
                                   DataCell(Text(file.uploadeddate)),
                                   DataCell(file.sharedfrom.toString() == ''
-                                      ? PopupMenuButton(
-                                          itemBuilder: (BuildContext context) =>
-                                              <PopupMenuEntry>[
-                                            PopupMenuItem(
-                                              child: const ListTile(
-                                                title: Text('Delete'),
-                                                leading: Icon(Icons.delete),
-                                              ),
-                                              onTap: () {
-                                                driveUploadProvider
-                                                    .showDeleteConfirmationDialog(
-                                                        context, file);
-                                              },
-                                            ),
-                                            PopupMenuItem(
-                                              child: const ListTile(
-                                                title: Text('Share'),
-                                                leading: Icon(
-                                                  Icons.share,
+                                      ? Center(
+                                          child: PopupMenuButton(
+                                            itemBuilder:
+                                                (BuildContext context) =>
+                                                    <PopupMenuEntry>[
+                                              PopupMenuItem(
+                                                child: const ListTile(
+                                                  title: Text('Delete'),
+                                                  leading: Icon(Icons.delete),
                                                 ),
+                                                onTap: () {
+                                                  driveUploadProvider
+                                                      .showDeleteConfirmationDialog(
+                                                          context, file);
+                                                },
                                               ),
-                                              onTap: () {
-                                                driveUploadProvider
-                                                    .showShareDialog(
-                                                        context,
-                                                        file.filecode,
-                                                        file.accountcode);
-                                              },
-                                            ),
-                                          ],
-                                          offset: const Offset(0, 40),
-                                          child: const Icon(Icons.more_vert),
+                                              PopupMenuItem(
+                                                child: const ListTile(
+                                                  title: Text('Share'),
+                                                  leading: Icon(
+                                                    Icons.share,
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  driveUploadProvider
+                                                      .showShareDialog(
+                                                          context,
+                                                          file.filecode,
+                                                          file.accountcode);
+                                                },
+                                              ),
+                                            ],
+                                            offset: const Offset(0, 40),
+                                            child: const Icon(Icons.more_vert),
+                                          ),
                                         )
                                       : Text(file.sharedfrom)),
-                                  DataCell(
-                                    ElevatedButton(
-                                      style: buttonStyleInvite,
-                                      onPressed: () {
-                                        launchUrl(Uri.parse(file.fileurl));
-                                      },
-                                      child: const Text('View',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
-                                  ),
                                 ],
                               );
                             }).toList()
@@ -281,7 +282,6 @@ class DriveUpload extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  DataCell(SizedBox()),
                                   DataCell(SizedBox()),
                                   DataCell(SizedBox()),
                                   DataCell(SizedBox()),
@@ -385,7 +385,7 @@ class DriveUpload extends StatelessWidget {
                                         }
                                       },
                                       child: const Text(
-                                        'Browse Files',
+                                        'Browse',
                                         style: TextStyle(
                                           color: Colors.white,
                                         ),
