@@ -111,7 +111,7 @@ class DriveUploadProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           // "accountcode": "AC-20231206095313303",
-          "accountcode": "AC-20231206063617013",
+          "accountcode": contantAcountCode,
           "fromdate": "01/01/2022",
           "todate": "03/31/2024"
         }),
@@ -149,7 +149,7 @@ class DriveUploadProvider extends ChangeNotifier {
             'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountShareDetails'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "accountcode": accountcode,
+          "accountcode": contantAcountCode,
           "filecode": filecode,
           "fromdate": "01/01/2022",
           "todate": "01/12/2024"
@@ -243,7 +243,7 @@ class DriveUploadProvider extends ChangeNotifier {
         };
       }).toList();
       Map<String, dynamic> payload = {
-        'accountcode': 'AC-20231206063617013',
+        'accountcode': contantAcountCode,
         // 'accountcode': 'AC-20231206095313303',
         'loggedinuser': 'system',
         'fileupload': fileUploads,
@@ -509,7 +509,7 @@ class DriveUploadProvider extends ChangeNotifier {
             'https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorDriveFiles'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "accountcode": accountCode,
+          "accountcode": contantAcountCode,
           "filecode": fileCode,
           "loggedinuser": "system"
         }),

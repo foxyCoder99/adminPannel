@@ -17,7 +17,11 @@ const String defaultActionItemPath =
     'https://advisorformsftp.blob.core.windows.net/advisorform/';
 
 // add these in a constant file preferably in constant/dimensions.dart
+ String contantAcountCode = "AC-20231206063617013"; 
+
 //start of dimensions.dart file
+
+
 final RegExp mobileValidatorRegExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
 final RegExp emailValidatorRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 const String kMobileNullError = "Please Enter your mobile";
