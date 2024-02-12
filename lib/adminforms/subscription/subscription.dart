@@ -1,3 +1,4 @@
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
@@ -11,6 +12,7 @@ class SubscriptionFormPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     final subscriptionProvider = Provider.of<SubscriptionProvider>(context);
     if (subscriptionProvider.selectedType.isEmpty &&
         subscriptionProvider.types.isNotEmpty) {
@@ -29,68 +31,79 @@ class SubscriptionFormPage extends StatelessWidget {
           .setSelectedPeriodunit(subscriptionProvider.displayPeriodunits.first);
     }
     double defaultwidth = SizeConfig.screenWidth;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Subscription Details'),
-      ),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ElevatedButton(
-                style: buttonStyleGrey,
-                onPressed: () {
-                  subscriptionProvider.showForm();
-                  subscriptionProvider.resetForm();
-                },
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add, color: Colors.white, size: 18),
-                    SizedBox(width: 8),
-                    Text(
-                      'Add a new subscription',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              if (subscriptionProvider.isFormVisible)
-                _buildSubscriptionForm(context, subscriptionProvider),
-              SizedBox(
-                width: defaultwidth / 3,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: defaultPadding,
-                    horizontal: defaultPadding,
-                  ),
-                  child: TextField(
-                    onChanged: (value) {
-                      subscriptionProvider.searchQuery = value;
+    return Background(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: SizeConfig.screenHeight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        subscriptionProvider.showForm();
+                        subscriptionProvider.resetForm();
+                      },
+                      child: const Text(
+                        '+ Add a new subscription',
+                        style: appstyle,
+                      )),
+                  /* ElevatedButton(
+                    style: buttonStyleGrey,
+                    onPressed: () {
+                      subscriptionProvider.showForm();
+                      subscriptionProvider.resetForm();
                     },
-                    decoration: const InputDecoration(
-                      labelText:
-                          'Search by subscription type, subscription name ...',
-                      prefixIcon: Icon(Icons.search),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add, color: Colors.white, size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          '+ add a new subscription',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ],
+                    ),
+                  ), */
+                  const SizedBox(height: 16.0),
+                  if (subscriptionProvider.isFormVisible)
+                    _buildSubscriptionForm(context, subscriptionProvider),
+                  SizedBox(
+                    width: defaultwidth / 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: defaultPadding,
+                        horizontal: defaultPadding,
+                      ),
+                      child: TextField(
+                        onChanged: (value) {
+                          subscriptionProvider.searchQuery = value;
+                        },
+                        decoration: const InputDecoration(
+                          labelText:
+                              'Search by subscription type, subscription name ...',
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 8.0),
+                  if (subscriptionProvider.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    _buildSubscriptionList(context, subscriptionProvider),
+                ],
               ),
-              const SizedBox(height: 8.0),
-              if (subscriptionProvider.isLoading)
-                const Center(child: CircularProgressIndicator())
-              else
-                _buildSubscriptionList(context, subscriptionProvider),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

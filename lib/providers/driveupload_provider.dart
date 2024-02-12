@@ -55,7 +55,6 @@ class DriveUploadProvider extends ChangeNotifier {
   }
 
   void toggleSelectedEmail(ShareMail email, bool value) {
-
     email.fileshare = value;
     if (value) {
       trueShareEmails.add(email);
@@ -107,10 +106,9 @@ class DriveUploadProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountUploadedSharedFiles'),
+            '${webApiserviceURL}Advisor/ReadDriveAccountUploadedSharedFiles'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          // "accountcode": "AC-20231206095313303",
           "accountcode": contantAcountCode,
           "fromdate": "01/01/2022",
           "todate": "03/31/2024"
@@ -126,7 +124,7 @@ class DriveUploadProvider extends ChangeNotifier {
           _readFiles.clear();
           _readFiles.addAll(data.map((file) => UploadedFile.fromJson(file)));
           _filterFiles();
-          // fetchSharingEmails();
+
           notifyListeners();
         } else {
           print("Error parsing file list. Expected a list, but got: $data");
@@ -145,8 +143,7 @@ class DriveUploadProvider extends ChangeNotifier {
   Future<void> fetchSharingEmails(String filecode, String accountcode) async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadDriveAccountShareDetails'),
+        Uri.parse('${webApiserviceURL}Advisor/ReadDriveAccountShareDetails'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "accountcode": contantAcountCode,
@@ -249,8 +246,8 @@ class DriveUploadProvider extends ChangeNotifier {
         'fileupload': fileUploads,
       };
       String jsonPayload = jsonEncode(payload);
-      Uri insertEndpoint = Uri.parse(
-          'https://advisordevelopment.azurewebsites.net/api/Advisor/InsertDriveAccountUploadFiles');
+      Uri insertEndpoint =
+          Uri.parse('${webApiserviceURL}Advisor/InsertDriveAccountUploadFiles');
       http.Response response = await http.post(
         insertEndpoint,
         headers: <String, String>{
@@ -259,7 +256,7 @@ class DriveUploadProvider extends ChangeNotifier {
         body: jsonPayload,
       );
       if (response.statusCode == 200) {
-        print('Upload file successful');
+        print('${response.body} : File Uploaded Successfully');
       } else {
         print('Upload file failed: ${response.statusCode}');
         print("Response body: ${response.body}");
@@ -373,9 +370,15 @@ class DriveUploadProvider extends ChangeNotifier {
                 ),
                 TextButton(
                   style: buttonStyleRed,
-                  onPressed: () {
-                    deleteAdvisorDriveFiles(file.accountcode, file.filecode);
+                  onPressed: () async {
+                    await deleteAdvisorDriveFiles(
+                        file.accountcode, file.filecode);
                     Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('File deleted successfully.'),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Delete',
@@ -404,7 +407,7 @@ class DriveUploadProvider extends ChangeNotifier {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Share File'),
+            title: const Text('Share With'),
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -419,7 +422,7 @@ class DriveUploadProvider extends ChangeNotifier {
                       itemBuilder: (BuildContext context, int index) {
                         final email = readEmails[index];
                         return Consumer<DriveUploadProvider>(
-                            builder: (context, driveUploadProvider, _) { 
+                            builder: (context, driveUploadProvider, _) {
                           return CheckboxListTile(
                               title: Text(email.accountname),
                               subtitle: Text(email.emailid),
@@ -441,8 +444,13 @@ class DriveUploadProvider extends ChangeNotifier {
                   children: [
                     ElevatedButton(
                       style: buttonStyleGreen,
-                      onPressed: () {
-                        sharesharingEmails(filecode, accountcode);
+                      onPressed: () async {
+                        await fileSharingEmails(filecode, accountcode);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('File shared successfully.'),
+                          ),
+                        );
                         Navigator.pop(context);
                       },
                       child: const Text(
@@ -453,7 +461,7 @@ class DriveUploadProvider extends ChangeNotifier {
                     ElevatedButton(
                       style: buttonStyleRed,
                       onPressed: () {
-                        Navigator.pop(context); // Close the dialog
+                        Navigator.pop(context);
                       },
                       child: const Text(
                         'Cancel',
@@ -472,7 +480,7 @@ class DriveUploadProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> sharesharingEmails(String filecode, String accountcode) async {
+  Future<void> fileSharingEmails(String filecode, String accountcode) async {
     try {
       List<Map<String, dynamic>> sharePayload = trueShareEmails.map((email) {
         return {
@@ -486,12 +494,12 @@ class DriveUploadProvider extends ChangeNotifier {
 
       final response = await http.post(
         Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/SetAdvisorDriveShareFilestoAccount'),
+            '${webApiserviceURL}Advisor/SetAdvisorDriveShareFilestoAccount'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(sharePayload),
       );
       if (response.statusCode == 200) {
-        print('File Shared successful');
+        print('${response.body} : Sharing file successfully');
       } else {
         print('Share failed: ${response.statusCode}');
         print("Response body: ${response.body}");
@@ -505,8 +513,7 @@ class DriveUploadProvider extends ChangeNotifier {
       String accountCode, String fileCode) async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorDriveFiles'),
+        Uri.parse('${webApiserviceURL}Advisor/DeleteAdvisorDriveFiles'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "accountcode": contantAcountCode,
@@ -514,8 +521,9 @@ class DriveUploadProvider extends ChangeNotifier {
           "loggedinuser": "system"
         }),
       );
+
       if (response.statusCode == 200) {
-        print('File deleted successfully');
+        print('Response body: ${response.body}');
         _readFiles.removeWhere((file) => file.filecode == fileCode);
         fetchUploadedFiles();
         notifyListeners();

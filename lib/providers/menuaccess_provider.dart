@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:advisorapp/models/admin/menuaccess_modal.dart';
+import 'package:advisorapp/constants.dart';
 
 class MenuAccessProvider extends ChangeNotifier {
   String selectedRoleCode = '';
@@ -29,7 +30,7 @@ class MenuAccessProvider extends ChangeNotifier {
       notifyListeners();
       final roleResponse = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminRoleM"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminRoleM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"status": "1"}),
       );
@@ -64,7 +65,7 @@ class MenuAccessProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminMenuAccess"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminMenuAccess"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"rolecode": roleCode, "status": "1"}),
       );
@@ -99,13 +100,13 @@ class MenuAccessProvider extends ChangeNotifier {
 
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminMenuAccess"),
+            "${webApiserviceURL}Advisor/UpdateAdvisorAdminMenuAccess"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(menuList),
       );
 
       if (response.statusCode == 200) {
-        print("Menu access updated successfully");
+        print("${response.body} : Menu access updated successfully");
         showDialog(
           context: context,
           builder: (BuildContext context) {

@@ -1,10 +1,10 @@
-// accountemployer_provider.dart
 import 'dart:convert';
 import 'package:advisorapp/models/admin/report_modals/accountreport_modal.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:advisorapp/constants.dart';
 
 class AccountEmployerProvider extends ChangeNotifier {
   final List<Accountreport> _accountList = [];
@@ -12,7 +12,7 @@ class AccountEmployerProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   var fromDate = DateTime(2022, 1, 1);
-  var toDate = DateTime(2023, 12, 1);
+  var toDate = DateTime(2024, 12, 1);
   var _searchQuery = '';
 
   AccountEmployerProvider() {
@@ -33,7 +33,7 @@ class AccountEmployerProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminAccountEmployer"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminAccountEmployer"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "fromdate": DateFormat('MM-dd-yyyy').format(fromDate),

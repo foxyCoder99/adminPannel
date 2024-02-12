@@ -3,6 +3,7 @@ import 'package:advisorapp/models/admin/report_modals/employerpartner_modal.dart
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:excel/excel.dart';
+import 'package:advisorapp/constants.dart';
 
 class EmployerPartnerProvider extends ChangeNotifier {
   final List<EmployerPartner> _accountList = [];
@@ -44,7 +45,7 @@ class EmployerPartnerProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminAccountEmployerPartner"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminAccountEmployerPartner"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"status": "1"}),
       );

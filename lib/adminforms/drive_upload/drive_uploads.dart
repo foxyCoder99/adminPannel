@@ -351,7 +351,7 @@ class DriveUpload extends StatelessWidget {
                                         driveUploadProvider.selectedFile != null
                                             ? driveUploadProvider
                                                 .selectedFile!.name
-                                            : 'No file chosen...',
+                                            : 'Browse File...',
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:advisorapp/models/admin/menu_modal.dart';
+import 'package:advisorapp/constants.dart';
 
 class MenuProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -63,7 +64,7 @@ class MenuProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminMenuM"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminMenuM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "status": "1",
@@ -101,7 +102,7 @@ class MenuProvider extends ChangeNotifier {
   ) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorAdminMenuM"),
+          "${webApiserviceURL}Advisor/InsertAdvisorAdminMenuM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "menuname": menuname,
@@ -109,7 +110,7 @@ class MenuProvider extends ChangeNotifier {
       }),
     );
     if (response.statusCode == 200) {
-      print("menu added successfully");
+      print("${response.body} : menu added successfully");
     } else {
       print("Error adding menu: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -119,7 +120,7 @@ class MenuProvider extends ChangeNotifier {
   Future<void> updateAdvisorAdminmenu(String menuname, String menucode) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminMenuM"),
+          "${webApiserviceURL}Advisor/UpdateAdvisorAdminMenuM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "menucode": menucode,
@@ -129,7 +130,7 @@ class MenuProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      print("menu updated successfully");
+      print("${response.body} : menu updated successfully");
     } else {
       print("Error updating menu: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -140,7 +141,7 @@ class MenuProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorAdminMenuM"),
+            "${webApiserviceURL}Advisor/DeleteAdvisorAdminMenuM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "id": id,
@@ -148,7 +149,7 @@ class MenuProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print("menu deleted successfully");
+        print("${response.body} : menu deleted successfully");
         _menuList.removeWhere((menu) => menu.id.toString() == id);
         notifyListeners();
       } else {

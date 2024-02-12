@@ -3,7 +3,7 @@ import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/providers/sidebar_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class AdminSideMenu extends StatelessWidget {
@@ -38,7 +38,50 @@ class AdminSideMenu extends StatelessWidget {
                           children: [],
                         ),
                       ),
-                      Container(
+                      ExpansionTile(
+                        title: const Text(
+                          'Master',
+                          style: sideMenuStyle,
+                        ),
+                        leading: const SizedBox(
+                          width: 20,
+                          child: Icon(
+                            Icons.manage_history,
+                            color: AppColors.iconGray,
+                          ),
+                        ),
+                        children: [
+                          buildReportSubMenu(
+                            context,
+                            'Subscription',
+                            'Subscription',
+                            Icons.subscriptions,
+                            () {
+                              sidebarProvider.selectedMenu = 'Subscription';
+                            },
+                          ),
+                          buildReportSubMenu(
+                            context,
+                            'Tax',
+                            'Tax',
+                            Icons.payment,
+                            () {
+                              sidebarProvider.selectedMenu = 'Tax';
+                            },
+                          ),
+                          buildReportSubMenu(
+                            context,
+                            'Company Type',
+                            'Company Type',
+                            Icons.corporate_fare,
+                            () {
+                              sidebarProvider.selectedMenu = 'Company Type';
+                            },
+                          )
+                        ],
+                      ),
+
+                      /* Container(
                         decoration: BoxDecoration(
                             color:
                                 (sidebarProvider.selectedMenu == 'Subscription')
@@ -62,8 +105,60 @@ class AdminSideMenu extends StatelessWidget {
                             //Navigator.pushNamed(context, "/Subscription");
                           },
                         ),
+                      ), */
+                      ExpansionTile(
+                        title: const Text(
+                          'Role & Access',
+                          style: sideMenuStyle,
+                        ),
+                        leading: const SizedBox(
+                          width: 20,
+                          child: Icon(
+                            Icons.description,
+                            color: AppColors.iconGray,
+                          ),
+                        ),
+                        children: [
+                          buildReportSubMenu(
+                            context,
+                            'Role',
+                            'Role',
+                            Icons.supervisor_account_outlined,
+                            () {
+                              sidebarProvider.selectedMenu = 'Role';
+                            },
+                          ),
+                          buildReportSubMenu(
+                            context,
+                            'Menu',
+                            'Menu',
+                            Icons.menu,
+                            () {
+                              sidebarProvider.selectedMenu = 'Menu';
+                            },
+                          ),
+                          buildReportSubMenu(
+                            context,
+                            'Menu Access',
+                            'Menu Access',
+                            Icons.accessibility,
+                            () {
+                              sidebarProvider.selectedMenu = 'Menu Access';
+                            },
+                          ),
+                          buildReportSubMenu(
+                            context,
+                            'Users',
+                            'Users',
+                            Icons.face_6,
+                            () {
+                              sidebarProvider.selectedMenu = 'Users';
+                            },
+                          )
+                        ],
                       ),
-                      Container(
+
+                      /*  Container(
                         decoration: BoxDecoration(
                             color: (sidebarProvider.selectedMenu == 'Role')
                                 ? const Color.fromARGB(255, 234, 231, 231)
@@ -86,8 +181,8 @@ class AdminSideMenu extends StatelessWidget {
                             //Navigator.pushNamed(context, "/Invoice");
                           },
                         ),
-                      ),
-                      Container(
+                      ), */
+                      /* Container(
                         decoration: BoxDecoration(
                             color: (sidebarProvider.selectedMenu == 'Menu')
                                 ? const Color.fromARGB(255, 234, 231, 231)
@@ -110,8 +205,8 @@ class AdminSideMenu extends StatelessWidget {
                             //Navigator.pushNamed(context, "/Invoice");
                           },
                         ),
-                      ),
-                      Container(
+                      ), */
+                      /* Container(
                         decoration: BoxDecoration(
                             color:
                                 (sidebarProvider.selectedMenu == 'Menu Access')
@@ -135,13 +230,12 @@ class AdminSideMenu extends StatelessWidget {
                             //Navigator.pushNamed(context, "/Invoice");
                           },
                         ),
-                      ),
-                      Container(
+                      ), */
+                      /*  Container(
                         decoration: BoxDecoration(
-                            color:
-                                (sidebarProvider.selectedMenu == 'User Reports')
-                                    ? const Color.fromARGB(255, 234, 231, 231)
-                                    : Colors.transparent,
+                            color: (sidebarProvider.selectedMenu == 'Users')
+                                ? const Color.fromARGB(255, 234, 231, 231)
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(30.0)),
                         child: ListTile(
                           leading: SizedBox(
@@ -152,16 +246,16 @@ class AdminSideMenu extends StatelessWidget {
                             ),
                           ),
                           title: const Text(
-                            'User Reports',
+                            'Users',
                             style: sideMenuStyle,
                           ),
                           onTap: () {
-                            sidebarProvider.selectedMenu = 'User Reports';
+                            sidebarProvider.selectedMenu = 'Users';
                             //Navigator.pushNamed(context, "/Invoice");
                           },
                         ),
-                      ),
-                      Container(
+                      ), */
+                      /* Container(
                         decoration: BoxDecoration(
                             color:
                                 (sidebarProvider.selectedMenu == 'Company Type')
@@ -189,8 +283,8 @@ class AdminSideMenu extends StatelessWidget {
                             //Navigator.pushNamed(context, "/Invoice");
                           },
                         ),
-                      ),
-                      Container(
+                      ), */
+                      /* Container(
                         decoration: BoxDecoration(
                             color: (sidebarProvider.selectedMenu == 'Tax')
                                 ? const Color.fromARGB(255, 234, 231, 231)
@@ -217,7 +311,7 @@ class AdminSideMenu extends StatelessWidget {
                             //Navigator.pushNamed(context, "/Invoice");
                           },
                         ),
-                      ),
+                      ), */
                       Container(
                         decoration: BoxDecoration(
                             color: (sidebarProvider.selectedMenu == 'Drive')
@@ -365,19 +459,25 @@ class AdminSideMenu extends StatelessWidget {
             : Colors.transparent,
         borderRadius: BorderRadius.circular(30.0),
       ),
-      child: ListTile(
-        leading: SizedBox(
-          width: 20,
-          child: Icon(
-            icon,
-            color: AppColors.iconGray,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20),
+        child: ListTile(
+          leading: SizedBox(
+            width: 18,
+            child: Icon(
+              icon,
+              color: AppColors.iconGray,
+            ),
           ),
+          title: Text(
+            title,
+            style: TextStyle(
+                color: AppColors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600),
+          ),
+          onTap: onTap,
         ),
-        title: Text(
-          title,
-          style: sideMenuStyle,
-        ),
-        onTap: onTap,
       ),
     );
   }

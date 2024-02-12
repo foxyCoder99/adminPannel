@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:advisorapp/models/admin/report_modals/empaction_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:advisorapp/constants.dart';
 
 class EmpActionProvider extends ChangeNotifier {
   List<Account> accounts = [];
@@ -48,7 +49,7 @@ class EmpActionProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminEmployeerwiseActionItem'),
+            '${webApiserviceURL}Advisor/ReadAdvisorAdminEmployeerwiseActionItem'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'status': '1'}),
       );

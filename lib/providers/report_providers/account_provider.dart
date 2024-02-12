@@ -1,4 +1,4 @@
-// account_provider.dart
+import 'package:advisorapp/constants.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -44,7 +44,7 @@ class AccountProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
       const url =
-          'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminAccountDetail';
+          '${webApiserviceURL}Advisor/ReadAdvisorAdminAccountDetail';
 
       final response = await http.post(
         Uri.parse(url),

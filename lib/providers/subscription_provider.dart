@@ -2,6 +2,7 @@ import 'package:advisorapp/models/admin/subscription_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:advisorapp/constants.dart';
 
 class SubscriptionProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -146,7 +147,7 @@ class SubscriptionProvider extends ChangeNotifier {
       BuildContext context, Subscription subscription) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorAdminSubscriptionTypeM"),
+          "${webApiserviceURL}Advisor/InsertAdvisorAdminSubscriptionTypeM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "type": subscription.type,
@@ -160,7 +161,7 @@ class SubscriptionProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      print("Subscription added successfully");
+      print("${response.body} : Subscription added successfully");
     } else {
       print("Error adding subscription: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -173,7 +174,7 @@ class SubscriptionProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminSubsciptionTypeM"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminSubsciptionTypeM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "status": "1",
@@ -210,7 +211,7 @@ class SubscriptionProvider extends ChangeNotifier {
   Future<void> updateAdvisorAdminSubscription(Subscription subscription) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminSubsciptionTypeM"),
+          "${webApiserviceURL}Advisor/UpdateAdvisorAdminSubsciptionTypeM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "type": subscription.type,
@@ -225,7 +226,7 @@ class SubscriptionProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      print("Subscription updated successfully");
+      print("${response.body} : Subscription updated successfully");
     } else {
       print("Error updating subscription: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -235,7 +236,7 @@ class SubscriptionProvider extends ChangeNotifier {
   Future<void> deleteAdvisorAdminSubscription(String subscriptioncode) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorAdminSubsciptionTypeM"),
+          "${webApiserviceURL}Advisor/DeleteAdvisorAdminSubsciptionTypeM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "subscriptioncode": subscriptioncode,
@@ -244,7 +245,7 @@ class SubscriptionProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      print("Subscription deleted successfully");
+      print("${response.body} : Subscription deleted successfully");
       _subscriptionList.removeWhere(
           (subscription) => subscription.subscriptioncode == subscriptioncode);
 

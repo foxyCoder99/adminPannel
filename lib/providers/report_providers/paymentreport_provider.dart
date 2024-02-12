@@ -1,10 +1,10 @@
-// payment_provider.dart
 import 'dart:convert';
 import 'package:advisorapp/models/admin/report_modals/paymentreport_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:excel/excel.dart';
+import 'package:advisorapp/constants.dart';
 
 class PaymentReportProvider extends ChangeNotifier {
   final List<PaymentReport> _paymentList = [];
@@ -35,7 +35,7 @@ class PaymentReportProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminPaymentDetail"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminPaymentDetail"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "fromdate": DateFormat('MM/dd/yyyy').format(fromDate),

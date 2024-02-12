@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:advisorapp/models/admin/user_modal.dart';
+import 'package:advisorapp/constants.dart';
 
 class UserProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -78,7 +79,7 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminUserM"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminUserM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "status": "1",
@@ -96,7 +97,7 @@ class UserProvider extends ChangeNotifier {
 
           final roleResponse = await http.post(
             Uri.parse(
-                "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminRoleM"),
+                "${webApiserviceURL}Advisor/ReadAdvisorAdminRoleM"),
             headers: {"Content-Type": "application/json"},
             body: jsonEncode({
               "status": "1",
@@ -143,7 +144,7 @@ class UserProvider extends ChangeNotifier {
   ) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorAdminUserM"),
+          "${webApiserviceURL}Advisor/InsertAdvisorAdminUserM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "firstname": firstname,
@@ -177,7 +178,7 @@ class UserProvider extends ChangeNotifier {
       //   );
       // } else {
       // }
-      print("User added successfully");
+      print("${response.body} : User added successfully");
     } else {
       print("Error adding user: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -188,7 +189,7 @@ class UserProvider extends ChangeNotifier {
       String emailId, String roleCode, String userCode) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminUserM"),
+          "${webApiserviceURL}Advisor/UpdateAdvisorAdminUserM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "usercode": userCode,
@@ -200,7 +201,7 @@ class UserProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      print("User updated successfully");
+      print("${response.body} : User updated successfully");
     } else {
       print("Error updating user: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -211,7 +212,7 @@ class UserProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorAdminUserM"),
+            "${webApiserviceURL}Advisor/DeleteAdvisorAdminUserM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "usercode": userCode,
@@ -219,7 +220,7 @@ class UserProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print("User deleted successfully");
+        print("${response.body} : User deleted successfully");
         _userList.removeWhere((user) => user.usercode == userCode);
         notifyListeners();
       } else {
@@ -304,7 +305,6 @@ class UserProvider extends ChangeNotifier {
         },
       );
     } else {
-      print('insert');
       await insertAdvisorAdminUser(
         context,
         newUser.firstname,

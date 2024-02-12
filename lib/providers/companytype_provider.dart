@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:advisorapp/models/admin/companytype_modal.dart';
+import 'package:advisorapp/constants.dart';
 
 class CompanyTypeProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -65,7 +66,7 @@ class CompanyTypeProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorCompanyTypeM"),
+            "${webApiserviceURL}Advisor/ReadAdvisorCompanyTypeM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "status": "1",
@@ -105,12 +106,12 @@ class CompanyTypeProvider extends ChangeNotifier {
   ) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorCompanyTypeM"),
+          "${webApiserviceURL}Advisor/InsertAdvisorCompanyTypeM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"typename": typename}),
     );
     if (response.statusCode == 200) {
-      print("CompanyType added successfully");
+      print("${response.body} : CompanyType added successfully");
     } else {
       print("Error adding CompanyType: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -121,13 +122,13 @@ class CompanyTypeProvider extends ChangeNotifier {
       String typename, String typecode) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorCompanyTypeM"),
+          "${webApiserviceURL}Advisor/UpdateAdvisorCompanyTypeM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(
           {"typecode": typecode, "typename": typename, "status": "1"}),
     );
     if (response.statusCode == 200) {
-      print("CompanyType updated successfully");
+      print("${response.body} : CompanyType updated successfully");
     } else {
       print("Error updating CompanyType: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -138,7 +139,7 @@ class CompanyTypeProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorCompanyTypeM"),
+            "${webApiserviceURL}Advisor/DeleteAdvisorCompanyTypeM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "id": id,
@@ -146,7 +147,7 @@ class CompanyTypeProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print("CompanyType deleted successfully");
+        print("${response.body} : CompanyType deleted successfully");
         _companyTypeList
             .removeWhere((companyType) => companyType.id.toString() == id);
         notifyListeners();

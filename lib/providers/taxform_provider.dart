@@ -1,8 +1,7 @@
-// taxform_provider.dart
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/models/admin/tax_modal.dart';
 
 class TaxProvider extends ChangeNotifier {
@@ -61,7 +60,7 @@ class TaxProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            'https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminTaxM'),
+            '${webApiserviceURL}Advisor/ReadAdvisorAdminTaxM'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'status': '1'}),
       );
@@ -101,7 +100,7 @@ class TaxProvider extends ChangeNotifier {
         // Implement update logic here
         final response = await http.post(
           Uri.parse(
-              'https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminTaxM'),
+              '${webApiserviceURL}Advisor/UpdateAdvisorAdminTaxM'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'id': _selectedTaxId.toString(),
@@ -129,7 +128,7 @@ class TaxProvider extends ChangeNotifier {
         // Implement save new record logic here
         final response = await http.post(
           Uri.parse(
-              'https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorAdminTaxM'),
+              '${webApiserviceURL}Advisor/InsertAdvisorAdminTaxM'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'taxname': taxnameController.text,
@@ -189,7 +188,7 @@ class TaxProvider extends ChangeNotifier {
       if (confirmDelete == true) {
         final response = await http.post(
           Uri.parse(
-              'https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorAdminTaxM'),
+              '${webApiserviceURL}Advisor/DeleteAdvisorAdminTaxM'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'id': taxId,

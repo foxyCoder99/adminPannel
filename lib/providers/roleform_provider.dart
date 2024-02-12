@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:advisorapp/models/admin/role_modal.dart';
+import 'package:advisorapp/constants.dart';
 
 class RoleProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -64,7 +65,7 @@ class RoleProvider extends ChangeNotifier {
       notifyListeners();
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminRoleM"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminRoleM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "status": "1",
@@ -102,7 +103,7 @@ class RoleProvider extends ChangeNotifier {
   ) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/InsertAdvisorAdminRoleM"),
+          "${webApiserviceURL}Advisor/InsertAdvisorAdminRoleM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "rolename": rolename,
@@ -110,7 +111,7 @@ class RoleProvider extends ChangeNotifier {
       }),
     );
     if (response.statusCode == 200) {
-      print("role added successfully");
+      print("${response.body} : role added successfully");
     } else {
       print("Error adding role: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -121,7 +122,7 @@ class RoleProvider extends ChangeNotifier {
       String rolename, String rolecode, bool status, String userid) async {
     final response = await http.post(
       Uri.parse(
-          "https://advisordevelopment.azurewebsites.net/api/Advisor/UpdateAdvisorAdminRoleM"),
+          "${webApiserviceURL}Advisor/UpdateAdvisorAdminRoleM"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         {
@@ -134,7 +135,7 @@ class RoleProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      print("role updated successfully");
+      print("${response.body} : role updated successfully");
     } else {
       print("Error updating role: ${response.statusCode}");
       print("Response body: ${response.body}");
@@ -145,7 +146,7 @@ class RoleProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/DeleteAdvisorAdminRoleM"),
+            "${webApiserviceURL}Advisor/DeleteAdvisorAdminRoleM"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "rolecode": rolecode,
@@ -153,7 +154,7 @@ class RoleProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print("role deleted successfully");
+        print("${response.body} : role deleted successfully");
         _roleList.removeWhere((role) => role.rolecode == rolecode);
         notifyListeners();
       } else {

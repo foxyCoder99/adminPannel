@@ -19,7 +19,7 @@ class UnpaidInvoiceProvider extends ChangeNotifier {
     try {
       final response = await http.post(
         Uri.parse(
-            "https://advisordevelopment.azurewebsites.net/api/Advisor/ReadAdvisorAdminUnpaidInvoice"),
+            "${webApiserviceURL}Advisor/ReadAdvisorAdminUnpaidInvoice"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"accountcode": contantAcountCode,}),
       );
