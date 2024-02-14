@@ -1,3 +1,4 @@
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
@@ -12,38 +13,26 @@ class MenuFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final menuProvider = Provider.of<MenuProvider>(context);
     double defaultwidth = SizeConfig.screenWidth;
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Menu Master Details'),
-        ),
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
+    return Background(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: SizeConfig.screenHeight,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ElevatedButton(
-                  style: buttonStyleGrey,
-                  onPressed: () {
-                    menuProvider.showForm();
-                    menuProvider.resetForm();
-                  },
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add, color: Colors.white, size: 18),
-                      SizedBox(width: 8),
-                      Text(
-                        'Add a new menu',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                TextButton(
+                    onPressed: () {
+                      menuProvider.showForm();
+                      menuProvider.resetForm();
+                    },
+                    child: const Text(
+                      '+ Add a new menu',
+                      style: appstyle,
+                    )),
                 const SizedBox(height: 16.0),
                 if (menuProvider.isFormVisible)
                   _buildmenuForm(context, menuProvider),
@@ -76,7 +65,9 @@ class MenuFormPage extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        ),
+      ],
+    ));
   }
 
   Widget _buildmenuForm(BuildContext context, MenuProvider menuProvider) {

@@ -1,3 +1,4 @@
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
@@ -12,67 +13,58 @@ class UserFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Details'),
-      ),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ElevatedButton(
-                style: buttonStyleGrey,
-                onPressed: () {
-                  userProvider.showForm();
-                  userProvider.resetForm();
-                },
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add, color: Colors.white, size: 18),
-                    SizedBox(width: 8),
-                    Text(
-                      'Add a new user',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+    return Background(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: SizeConfig.screenHeight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        userProvider.showForm();
+                        userProvider.resetForm();
+                      },
+                      child: const Text(
+                        '+ Add a new user',
+                        style: appstyle,
+                      )),
+                  const SizedBox(height: 16.0),
+                  if (userProvider.isFormVisible)
+                    _buildUserForm(context, userProvider),
+                  SizedBox(
+                    width: SizeConfig.screenWidth / 3,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: defaultPadding,
+                        horizontal: defaultPadding,
+                      ),
+                      child: TextField(
+                        onChanged: (value) {
+                          userProvider.searchQuery = value;
+                        },
+                        decoration: const InputDecoration(
+                          labelText:
+                              'Search by username, emailid, rolename ... ',
+                          prefixIcon: Icon(Icons.search),
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              if (userProvider.isFormVisible)
-                _buildUserForm(context, userProvider),
-              SizedBox(
-                width: SizeConfig.screenWidth / 3,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: defaultPadding,
-                    horizontal: defaultPadding,
                   ),
-                  child: TextField(
-                    onChanged: (value) {
-                      userProvider.searchQuery = value;
-                    },
-                    decoration: const InputDecoration(
-                      labelText: 'Search by username, emailid, rolename ... ',
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                ),
+                  const SizedBox(height: 8.0),
+                  if (userProvider.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    _buildUserDataTable(context, userProvider),
+                ],
               ),
-              const SizedBox(height: 8.0),
-              if (userProvider.isLoading)
-                const Center(child: CircularProgressIndicator())
-              else
-                _buildUserDataTable(context, userProvider),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -202,7 +194,8 @@ class UserFormPage extends StatelessWidget {
                   style: buttonStyleGreen,
                   onPressed: () {
                     userProvider.formKey.currentState?.validate();
-                    if (userProvider.formKey.currentState?.validate() ?? false) {
+                    if (userProvider.formKey.currentState?.validate() ??
+                        false) {
                       userProvider.saveUser(context);
                     }
                   },
@@ -215,8 +208,8 @@ class UserFormPage extends StatelessWidget {
                   onPressed: () {
                     userProvider.cancelUserForm(context);
                   },
-                  child:
-                      const Text('Cancel', style: TextStyle(color: Colors.white)),
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),

@@ -45,33 +45,3 @@ class UploadedFile {
     );
   }
 }
-
-class ShareMail {
-  final String accountcode;
-  final String accountname;
-  final String emailid;
-  bool fileshare;
-
-  ShareMail({
-    required this.accountcode,
-    required this.accountname,
-    required this.emailid,
-    required this.fileshare,
-  });
-
-  factory ShareMail.fromJson(Map<String, dynamic> json) {
-    return ShareMail(
-      accountcode: json['accountcode'] ?? '',
-      accountname: json['accountname'] ?? '',
-      emailid: json['emailid'] ?? '',
-      fileshare: json['fileshare'] ?? false,
-    );
-  }
-}
-
-class SelectedEmail {
-  final String emailId;
-  final String accountcode;
-
-  SelectedEmail(this.emailId, this.accountcode);
-}

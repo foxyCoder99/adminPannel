@@ -1,20 +1,21 @@
+//company_category.dart
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
-import 'package:advisorapp/providers/companytype_provider.dart';
+import 'package:advisorapp/providers/companycategory_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:advisorapp/component/background.dart';
 
-class CompanyType extends StatelessWidget {
-  const CompanyType({Key? key}) : super(key: key);
+class CompanyCategory extends StatelessWidget {
+  const CompanyCategory({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final companyTypeProvider = Provider.of<CompanyTypeProvider>(context);
+    final companycategoryProvider =
+        Provider.of<CompanyCategoryProvider>(context);
     double defaultwidth = SizeConfig.screenWidth;
-
     return Background(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,16 +29,16 @@ class CompanyType extends StatelessWidget {
                 children: [
                   TextButton(
                       onPressed: () {
-                        companyTypeProvider.showForm();
-                        companyTypeProvider.resetForm();
+                        companycategoryProvider.showForm();
+                        companycategoryProvider.resetForm();
                       },
                       child: const Text(
-                        ' + Add a new Company Type',
+                        ' + Add a new Company Category',
                         style: appstyle,
                       )),
                   const SizedBox(height: 16.0),
-                  if (companyTypeProvider.isFormVisible)
-                    _buildCompanyForm(context, companyTypeProvider),
+                  if (companycategoryProvider.isFormVisible)
+                    _buildCompanyForm(context, companycategoryProvider),
                   SizedBox(
                     width: defaultwidth / 3,
                     child: Padding(
@@ -47,20 +48,20 @@ class CompanyType extends StatelessWidget {
                       ),
                       child: TextField(
                         onChanged: (value) {
-                          companyTypeProvider.searchQuery = value;
+                          companycategoryProvider.searchQuery = value;
                         },
                         decoration: const InputDecoration(
-                          labelText: 'Search by company type name ...',
+                          labelText: 'Search by company category name ...',
                           prefixIcon: Icon(Icons.search),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 8.0),
-                  if (companyTypeProvider.isLoading)
+                  if (companycategoryProvider.isLoading)
                     const Center(child: CircularProgressIndicator())
                   else
-                    _buildCompanyDataTable(context, companyTypeProvider),
+                    _buildCompanyDataTable(context, companycategoryProvider),
                 ],
               ),
             ),
@@ -71,12 +72,12 @@ class CompanyType extends StatelessWidget {
   }
 
   Widget _buildCompanyForm(
-      BuildContext context, CompanyTypeProvider companyTypeProvider) {
+      BuildContext context, CompanyCategoryProvider companyCategoryProvider) {
     double defaultwidth = SizeConfig.screenWidth;
     return SizedBox(
       width: defaultwidth / 3,
       child: Form(
-        key: companyTypeProvider.formKey,
+        key: companyCategoryProvider.formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,18 +85,18 @@ class CompanyType extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                   vertical: defaultPadding, horizontal: defaultPadding),
               child: TextFormField(
-                controller: companyTypeProvider.typenameController,
+                controller: companyCategoryProvider.typenameController,
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 cursorColor: kPrimaryColor,
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
-                    return 'Please Enter Company type Name';
+                    return 'Please Enter Company Category Name';
                   }
                   return null;
                 },
                 decoration: CustomTextDecoration.textDecoration(
-                  'Company type Name',
+                  'Company Category Name',
                   const Icon(
                     Icons.corporate_fare,
                     color: AppColors.secondary,
@@ -110,10 +111,11 @@ class CompanyType extends StatelessWidget {
                 ElevatedButton(
                   style: buttonStyleGreen,
                   onPressed: () {
-                    companyTypeProvider.formKey.currentState?.validate();
-                    if (companyTypeProvider.formKey.currentState?.validate() ??
+                    companyCategoryProvider.formKey.currentState?.validate();
+                    if (companyCategoryProvider.formKey.currentState
+                            ?.validate() ??
                         false) {
-                      companyTypeProvider.saveCompanyType(context);
+                      companyCategoryProvider.saveCompanyCategory(context);
                     }
                   },
                   child:
@@ -123,7 +125,7 @@ class CompanyType extends StatelessWidget {
                 ElevatedButton(
                   style: buttonStyleBlue,
                   onPressed: () {
-                    companyTypeProvider.cancelTypeForm(context);
+                    companyCategoryProvider.cancelTypeForm(context);
                   },
                   child: const Text('Cancel',
                       style: TextStyle(color: Colors.white)),
@@ -137,10 +139,10 @@ class CompanyType extends StatelessWidget {
   }
 
   Widget _buildCompanyDataTable(
-      BuildContext context, CompanyTypeProvider companyTypeProvider) {
+      BuildContext context, CompanyCategoryProvider companyCategoryProvider) {
     double defaultwidth = SizeConfig.screenWidth;
 
-    final typeList = companyTypeProvider.filteredCompanyTypeList;
+    final typeList = companyCategoryProvider.filteredCompanyTypeList;
     if (typeList.isEmpty) {
       return const Center(
         child: Text(
@@ -156,22 +158,22 @@ class CompanyType extends StatelessWidget {
           width: defaultwidth / 3,
           child: DataTable(
             columns: const [
-              DataColumn(label: Text('Type Name')),
+              DataColumn(label: Text('Category Name')),
               DataColumn(label: Text('Actions')),
             ],
             rows: typeList
                 .map(
-                  (companyType) => DataRow(
+                  (Category) => DataRow(
                     cells: [
-                      DataCell(Text(companyType.typename)),
+                      DataCell(Text(Category.name)),
                       DataCell(
                         Row(
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
-                                companyTypeProvider.editCompanyType(
-                                    context, companyType);
+                                companyCategoryProvider.editCompanyCategory(
+                                    context, Category);
                               },
                             ),
                             IconButton(
@@ -183,7 +185,7 @@ class CompanyType extends StatelessWidget {
                                     return AlertDialog(
                                       title: const Text("Confirm Delete"),
                                       content: const Text(
-                                          "Are you sure you want to delete this Company Type?"),
+                                          "Are you sure you want to delete this Company category?"),
                                       actions: [
                                         TextButton(
                                           onPressed: () {
@@ -193,9 +195,9 @@ class CompanyType extends StatelessWidget {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            companyTypeProvider
-                                                .deleteAdvisorCompanyType(
-                                                    companyType.id.toString());
+                                            companyCategoryProvider
+                                                .deleteCompanyCategory(
+                                                    Category.id.toString());
                                             Navigator.pop(context);
                                           },
                                           child: const Text("Delete"),

@@ -20,6 +20,7 @@ import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/providers/sidebar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:advisorapp/adminforms/company_category/company_category.dart';
 
 class CentralForm extends StatelessWidget {
   const CentralForm({Key? key}) : super(key: key);
@@ -43,6 +44,8 @@ class CentralForm extends StatelessWidget {
                   return Center(
                       child: (menuProvider.selectedMenu == "Company Type")
                           ? const CompanyType()
+                            : (menuProvider.selectedMenu == "Company Category")
+                              ? const CompanyCategory()
                           : (menuProvider.selectedMenu == "Users")
                               ? const UserFormPage()
                               : (menuProvider.selectedMenu == "Subscription")

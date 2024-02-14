@@ -1,5 +1,7 @@
 import 'package:advisorapp/adminforms/centralform.dart';
-import 'package:advisorapp/providers/driveupload_provider.dart';
+import 'package:advisorapp/providers/companycategory_provider.dart';
+import 'package:advisorapp/providers/drive_providers/driveupload_provider.dart';
+import 'package:advisorapp/providers/drive_providers/sharefile_provider.dart';
 import 'package:advisorapp/providers/report_providers/account_actionitem_provider.dart';
 import 'package:advisorapp/providers/report_providers/account_provider.dart';
 import 'package:advisorapp/providers/report_providers/accountemployer_provider.dart';
@@ -36,6 +38,7 @@ void main() {
         //     create: (context) => LoginProvider(googleSignIn)),
         // ChangeNotifierProvider(create: (context) => MasterProvider()),
         ChangeNotifierProvider(create: (context) => CompanyTypeProvider()),
+        ChangeNotifierProvider(create: (context) => CompanyCategoryProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => SidebarProvider()),
         // ChangeNotifierProvider(create: (context) => EliteImageProvider()),
@@ -55,6 +58,7 @@ void main() {
             create: (context) => AccountActionItemProvider()),
         ChangeNotifierProvider(create: (context) => AccountProvider()),
         ChangeNotifierProvider(create: (context) => DriveUploadProvider()),
+        ChangeNotifierProvider(create: (context) => ShareFileProvider()),
       ],
       child: const MyApp(),
     ),

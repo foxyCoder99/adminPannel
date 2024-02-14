@@ -1,12 +1,14 @@
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
+import 'package:advisorapp/providers/drive_providers/sharefile_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:advisorapp/providers/driveupload_provider.dart';
+import 'package:advisorapp/providers/drive_providers/driveupload_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,286 +17,306 @@ class DriveUpload extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final driveUploadProvider = Provider.of<DriveUploadProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Upload Your Files Here'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                  elevation: 4,
-                  shadowColor: Colors.grey.withOpacity(0.5),
-                  backgroundColor: AppColors.action,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  )),
-              onPressed: () {
-                driveUploadProvider.showForm();
-                driveUploadProvider.resetForm();
-              },
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
+    return Background(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: SizeConfig.screenHeight,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 8.0),
-                  Text(
-                    'New',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            if (driveUploadProvider.isFormVisible)
-              _buildUploadForm(context, driveUploadProvider),
-            SizedBox(
-              width: SizeConfig.screenWidth / 2,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: TextFieldTapRegion(
-                  onTapOutside: (event) {
-                    driveUploadProvider.searchFocused = false;
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          blurRadius: 3,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 2),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                        elevation: 4,
+                        shadowColor: Colors.grey.withOpacity(0.5),
+                        backgroundColor: AppColors.action,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        )),
+                    onPressed: () {
+                      driveUploadProvider.showForm();
+                      driveUploadProvider.resetForm();
+                    },
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 8.0),
+                        Text(
+                          'New',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ],
                     ),
-                    child: Column(
-                      children: [
-                        Consumer<DriveUploadProvider>(
-                            builder: (context, driveUploadProvider, _) {
-                          return TextField(
-                            onChanged: (value) {
-                              driveUploadProvider.searchQuery = value;
-                            },
-                            onTap: (() {
-                              driveUploadProvider.searchFocused = true;
-                            }),
-                            decoration: InputDecoration(
-                              fillColor: Colors.grey.shade50,
-                              hintText: 'Search files...',
-                              contentPadding: const EdgeInsets.all(8),
-                              prefixIcon: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  const SizedBox(height: 16.0),
+                  if (driveUploadProvider.isFormVisible)
+                    _buildUploadForm(context, driveUploadProvider),
+                  SizedBox(
+                    width: SizeConfig.screenWidth / 2,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: TextFieldTapRegion(
+                        onTapOutside: (event) {
+                          driveUploadProvider.searchFocused = false;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                blurRadius: 3,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Consumer<DriveUploadProvider>(
+                                  builder: (context, driveUploadProvider, _) {
+                                return TextField(
+                                  onChanged: (value) {
+                                    driveUploadProvider.searchQuery = value;
+                                  },
+                                  onTap: (() {
+                                    driveUploadProvider.searchFocused = true;
+                                  }),
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.grey.shade50,
+                                    hintText: 'Search files...',
+                                    contentPadding: const EdgeInsets.all(8),
+                                    prefixIcon: MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(18),
+                                        ),
+                                        child: const Icon(
+                                          Icons.search,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      onHover: (event) {
+                                        Colors.grey.shade200;
+                                      },
+                                    ),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 238, 238, 238),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: const BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 238, 238, 238),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.search,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                onHover: (event) {
-                                  Colors.grey.shade200;
-                                },
-                              ),
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 238, 238, 238),
-                                  width: 1,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 238, 238, 238),
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade300,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                        Consumer<DriveUploadProvider>(
-                            builder: (context, driveUploadProvider, _) {
-                          return driveUploadProvider.searchFocused
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: Wrap(
-                                    spacing: 10.0,
-                                    runSpacing: 8.0,
-                                    children: [
-                                      _buildCategoryButton(
-                                          context, driveUploadProvider, 'word'),
-                                      _buildCategoryButton(context,
-                                          driveUploadProvider, 'excel'),
-                                      _buildCategoryButton(
-                                          context, driveUploadProvider, 'pdf'),
-                                      _buildCategoryButton(context,
-                                          driveUploadProvider, 'image'),
-                                      _buildCategoryButton(context,
-                                          driveUploadProvider, 'audio'),
-                                      _buildCategoryButton(context,
-                                          driveUploadProvider, 'video'),
-                                      _buildCategoryButton(
-                                          context, driveUploadProvider, 'zip'),
-                                      _buildCategoryButton(context,
-                                          driveUploadProvider, 'document'),
-                                    ],
-                                  ),
-                                )
-                              : const SizedBox();
-                        }),
-                      ],
+                                );
+                              }),
+                              Consumer<DriveUploadProvider>(
+                                  builder: (context, driveUploadProvider, _) {
+                                return driveUploadProvider.searchFocused
+                                    ? Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 10, 10, 10),
+                                        child: Wrap(
+                                          spacing: 10.0,
+                                          runSpacing: 8.0,
+                                          children: [
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'word'),
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'excel'),
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'pdf'),
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'image'),
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'audio'),
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'video'),
+                                            _buildCategoryButton(context,
+                                                driveUploadProvider, 'zip'),
+                                            _buildCategoryButton(
+                                                context,
+                                                driveUploadProvider,
+                                                'document'),
+                                          ],
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              }),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            if (driveUploadProvider.isLoading)
-              const Center(child: CircularProgressIndicator())
-            else
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text('File Name')),
-                        DataColumn(label: Text('File Type')),
-                        DataColumn(label: Text('Description')),
-                        DataColumn(label: Text('Upload Date')),
-                        DataColumn(label: Text('Action')),
-                      ],
-                      rows: driveUploadProvider.filteredFiles.isNotEmpty
-                          ? driveUploadProvider.filteredFiles.map((file) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(
-                                    InkWell(
-                                      onTap: () {
-                                        if (file.fileurl.isNotEmpty) {
-                                          launchUrl(Uri.parse(file.fileurl));
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          _getIconForFiletype(
-                                              driveUploadProvider
-                                                  .determineFiletype(
-                                                      file.filename)),
-                                          const SizedBox(width: 8),
+                  const SizedBox(height: 16.0),
+                  if (driveUploadProvider.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: DataTable(
+                            columns: const [
+                              DataColumn(label: Text('File Name')),
+                              DataColumn(label: Text('File Type')),
+                              DataColumn(label: Text('Description')),
+                              DataColumn(label: Text('Upload Date')),
+                              DataColumn(label: Text('Action')),
+                            ],
+                            rows: driveUploadProvider.filteredFiles.isNotEmpty
+                                ? driveUploadProvider.filteredFiles.map((file) {
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(
+                                          InkWell(
+                                            onTap: () {
+                                              if (file.fileurl.isNotEmpty) {
+                                                launchUrl(
+                                                    Uri.parse(file.fileurl));
+                                              }
+                                            },
+                                            child: Row(
+                                              children: [
+                                                _getIconForFiletype(
+                                                    driveUploadProvider
+                                                        .determineFiletype(
+                                                            file.filename)),
+                                                const SizedBox(width: 8),
+                                                SizedBox(
+                                                  width:
+                                                      SizeConfig.screenWidth /
+                                                          4,
+                                                  child: Text(
+                                                    file.filename,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      decoration: file.fileurl
+                                                              .isNotEmpty
+                                                          ? TextDecoration
+                                                              .underline
+                                                          : TextDecoration.none,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        DataCell(Text(file.filetype)),
+                                        DataCell(Text(file.description)),
+                                        DataCell(Text(file.uploadeddate)),
+                                        DataCell(file.sharedfrom.toString() ==
+                                                ''
+                                            ? Center(
+                                                child: PopupMenuButton(
+                                                  itemBuilder:
+                                                      (BuildContext context) =>
+                                                          <PopupMenuEntry>[
+                                                    PopupMenuItem(
+                                                      child: const ListTile(
+                                                        title: Text('Delete'),
+                                                        leading:
+                                                            Icon(Icons.delete),
+                                                      ),
+                                                      onTap: () {
+                                                        driveUploadProvider
+                                                            .showDeleteConfirmationDialog(
+                                                                context, file);
+                                                      },
+                                                    ),
+                                                    PopupMenuItem(
+                                                      child: const ListTile(
+                                                        title: Text('Share'),
+                                                        leading: Icon(
+                                                          Icons.share,
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        Provider.of<ShareFileProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .showShareDialog(
+                                                                context,
+                                                                file.filecode,
+                                                                file.accountcode);
+                                                      },
+                                                    ),
+                                                  ],
+                                                  offset: const Offset(0, 40),
+                                                  child: const Icon(
+                                                      Icons.more_vert),
+                                                ),
+                                              )
+                                            : Text(file.sharedfrom)),
+                                      ],
+                                    );
+                                  }).toList()
+                                : [
+                                    const DataRow(
+                                      cells: [
+                                        DataCell(
                                           SizedBox(
-                                            width: SizeConfig.screenWidth / 4,
-                                            child: Text(
-                                              file.filename,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                decoration: file
-                                                        .fileurl.isNotEmpty
-                                                    ? TextDecoration.underline
-                                                    : TextDecoration.none,
-                                                color: Colors.black,
+                                            child: Center(
+                                              child: Text(
+                                                'Please Upload File',
+                                                style: TextStyle(
+                                                  fontStyle: FontStyle.italic,
+                                                  color: Colors.grey,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(Text(file.filetype)),
-                                  DataCell(Text(file.description)),
-                                  DataCell(Text(file.uploadeddate)),
-                                  DataCell(file.sharedfrom.toString() == ''
-                                      ? Center(
-                                          child: PopupMenuButton(
-                                            itemBuilder:
-                                                (BuildContext context) =>
-                                                    <PopupMenuEntry>[
-                                              PopupMenuItem(
-                                                child: const ListTile(
-                                                  title: Text('Delete'),
-                                                  leading: Icon(Icons.delete),
-                                                ),
-                                                onTap: () {
-                                                  driveUploadProvider
-                                                      .showDeleteConfirmationDialog(
-                                                          context, file);
-                                                },
-                                              ),
-                                              PopupMenuItem(
-                                                child: const ListTile(
-                                                  title: Text('Share'),
-                                                  leading: Icon(
-                                                    Icons.share,
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  driveUploadProvider
-                                                      .showShareDialog(
-                                                          context,
-                                                          file.filecode,
-                                                          file.accountcode);
-                                                },
-                                              ),
-                                            ],
-                                            offset: const Offset(0, 40),
-                                            child: const Icon(Icons.more_vert),
-                                          ),
-                                        )
-                                      : Text(file.sharedfrom)),
-                                ],
-                              );
-                            }).toList()
-                          : [
-                              const DataRow(
-                                cells: [
-                                  DataCell(
-                                    SizedBox(
-                                      child: Center(
-                                        child: Text(
-                                          'Please Upload File',
-                                          style: TextStyle(
-                                            fontStyle: FontStyle.italic,
-                                            color: Colors.grey,
-                                          ),
                                         ),
-                                      ),
+                                        DataCell(SizedBox()),
+                                        DataCell(SizedBox()),
+                                        DataCell(SizedBox()),
+                                        DataCell(SizedBox()),
+                                      ],
                                     ),
-                                  ),
-                                  DataCell(SizedBox()),
-                                  DataCell(SizedBox()),
-                                  DataCell(SizedBox()),
-                                  DataCell(SizedBox()),
-                                ],
-                              ),
-                            ],
+                                  ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                ],
               ),
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

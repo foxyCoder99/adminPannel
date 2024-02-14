@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
-import 'package:advisorapp/models/admin/upload_modal.dart';
+import 'package:advisorapp/models/admin/drive_modals/upload_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class DriveUploadProvider extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -15,11 +13,10 @@ class DriveUploadProvider extends ChangeNotifier {
 
   final List<UploadedFile> _uploadedFiles = [];
   final List<UploadedFile> _readFiles = [];
-  final List<ShareMail> _readEmails = [];
   List<UploadedFile> _filteredFiles = [];
-  List<ShareMail> trueShareEmails = [];
 
   String _searchQuery = '';
+
   String selectedFileType = 'DOC';
   TextEditingController emailController = TextEditingController();
   TextEditingController fileDescpController = TextEditingController();
@@ -27,6 +24,7 @@ class DriveUploadProvider extends ChangeNotifier {
   final Set<String> _selectedCategories = {};
 
   bool _searchFocused = false;
+
   bool _uploadingFile = false;
   bool _isFormVisible = false;
   bool _isLoading = false;
@@ -35,6 +33,7 @@ class DriveUploadProvider extends ChangeNotifier {
   Set<String> get selectedCategories => _selectedCategories;
 
   String get searchQuery => _searchQuery;
+
   bool get isLoading => _isLoading;
   bool get isFormVisible => _isFormVisible;
   bool get uploadingFile => _uploadingFile;
@@ -42,7 +41,7 @@ class DriveUploadProvider extends ChangeNotifier {
 
   List<UploadedFile> get uploadedFiles => _uploadedFiles;
   List<UploadedFile> get readFiles => _readFiles;
-  List<ShareMail> get readEmails => _readEmails;
+
   List<UploadedFile> get filteredFiles => _filteredFiles;
 
   void resetSearchQuery() {
@@ -51,16 +50,6 @@ class DriveUploadProvider extends ChangeNotifier {
 
   void setSelectedFile(PlatformFile file) {
     _selectedFile = file;
-    notifyListeners();
-  }
-
-  void toggleSelectedEmail(ShareMail email, bool value) {
-    email.fileshare = value;
-    if (value) {
-      trueShareEmails.add(email);
-    } else {
-      trueShareEmails.remove(email);
-    }
     notifyListeners();
   }
 
@@ -137,38 +126,6 @@ class DriveUploadProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
-    }
-  }
-
-  Future<void> fetchSharingEmails(String filecode, String accountcode) async {
-    try {
-      final response = await http.post(
-        Uri.parse('${webApiserviceURL}Advisor/ReadDriveAccountShareDetails'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "accountcode": contantAcountCode,
-          "filecode": filecode,
-          "fromdate": "01/01/2022",
-          "todate": "01/12/2024"
-        }),
-      );
-      if (response.statusCode == 200) {
-        final cleanedResponse =
-            response.body.replaceAll(RegExp(r'[\u0000-\u001F]'), '');
-
-        final dynamic data = jsonDecode(cleanedResponse);
-        if (data is List) {
-          _readEmails.clear();
-          _readEmails.addAll(data.map((email) => ShareMail.fromJson(email)));
-          notifyListeners();
-        } else {
-          print("Error parsing Emails list. Expected a list, but got: $data");
-        }
-      } else {
-        print('Failed to fetch Emails: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching Emails: $e');
     }
   }
 
@@ -391,122 +348,6 @@ class DriveUploadProvider extends ChangeNotifier {
         );
       },
     );
-  }
-
-  void showShareDialog(
-      BuildContext context, String filecode, String accountcode) async {
-    try {
-      await fetchSharingEmails(filecode, accountcode);
-      for (ShareMail email in readEmails) {
-        if (email.fileshare) {
-          trueShareEmails.add(email);
-        }
-      }
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Share With'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    width: SizeConfig.screenWidth / 3,
-                    height: SizeConfig.screenHeight / 5,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.all(2.0),
-                      itemCount: readEmails.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final email = readEmails[index];
-                        return Consumer<DriveUploadProvider>(
-                            builder: (context, driveUploadProvider, _) {
-                          return CheckboxListTile(
-                              title: Text(email.accountname),
-                              subtitle: Text(email.emailid),
-                              value: email.fileshare,
-                              onChanged: (value) {
-                                driveUploadProvider.toggleSelectedEmail(
-                                    email, value ?? false);
-                              });
-                        });
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      style: buttonStyleGreen,
-                      onPressed: () async {
-                        await fileSharingEmails(filecode, accountcode);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('File shared successfully.'),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Share',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: buttonStyleRed,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      print('Error reading share Emails: $e');
-    }
-  }
-
-  Future<void> fileSharingEmails(String filecode, String accountcode) async {
-    try {
-      List<Map<String, dynamic>> sharePayload = trueShareEmails.map((email) {
-        return {
-          "toaccountcode": email.accountcode,
-          "fromaccountcode": accountcode,
-          "filecode": filecode,
-          "fileshare": 1,
-          "loggedinuser": "system"
-        };
-      }).toList();
-
-      final response = await http.post(
-        Uri.parse(
-            '${webApiserviceURL}Advisor/SetAdvisorDriveShareFilestoAccount'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(sharePayload),
-      );
-      if (response.statusCode == 200) {
-        print('${response.body} : Sharing file successfully');
-      } else {
-        print('Share failed: ${response.statusCode}');
-        print("Response body: ${response.body}");
-      }
-    } catch (e) {
-      print('Error sharing files: $e');
-    }
   }
 
   Future<void> deleteAdvisorDriveFiles(

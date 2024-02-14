@@ -77,6 +77,15 @@ class AdminSideMenu extends StatelessWidget {
                             () {
                               sidebarProvider.selectedMenu = 'Company Type';
                             },
+                          ),
+                                   buildReportSubMenu(
+                            context,
+                            'Company Category',
+                            'Company Category',
+                            Icons.corporate_fare,
+                            () {
+                              sidebarProvider.selectedMenu = 'Company Category';
+                            },
                           )
                         ],
                       ),

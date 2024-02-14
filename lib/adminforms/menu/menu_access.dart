@@ -1,3 +1,4 @@
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
@@ -13,46 +14,49 @@ class MenuAccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final menuAccessProvider = Provider.of<MenuAccessProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Menu Access'),
-      ),
-      body: SizedBox(
-        width: SizeConfig.screenWidth / 2,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildRoleDropdown(menuAccessProvider),
-              const SizedBox(height: 16.0),
-              if (menuAccessProvider.isLoading)
-                const Center(child: CircularProgressIndicator())
-              else
-                _buildMenuDataTable(menuAccessProvider),
-              const SizedBox(height: 16.0),
-              SizedBox(
-                width: SizeConfig.screenWidth / 3,
-                child: Visibility(
-                  visible: menuAccessProvider.isUpdateBtn &&
-                      menuAccessProvider.menuList.isNotEmpty,
-                  child: Center(
-                    child: ElevatedButton(
-                      style: buttonStyleBlue,
-                      onPressed: () {
-                        if (menuAccessProvider.menuList.isNotEmpty) {
-                          // menuAccessProvider.updateCheckedMenus(context);
-                        }
-                      },
-                      child: const Text('Update',
-                          style: TextStyle(color: Colors.white)),
+    return Background(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: SizeConfig.screenHeight,
+            // width: SizeConfig.screenWidth / 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildRoleDropdown(menuAccessProvider),
+                  const SizedBox(height: 16.0),
+                  if (menuAccessProvider.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    _buildMenuDataTable(menuAccessProvider),
+                  const SizedBox(height: 16.0),
+                  SizedBox(
+                    width: SizeConfig.screenWidth / 3,
+                    child: Visibility(
+                      visible: menuAccessProvider.isUpdateBtn &&
+                          menuAccessProvider.menuList.isNotEmpty,
+                      child: Center(
+                        child: ElevatedButton(
+                          style: buttonStyleBlue,
+                          onPressed: () {
+                            if (menuAccessProvider.menuList.isNotEmpty) {
+                              // menuAccessProvider.updateCheckedMenus(context);
+                            }
+                          },
+                          child: const Text('Update',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -132,7 +136,6 @@ class MenuAccessPage extends StatelessWidget {
                   child: Checkbox(
                     value: menu.trxnaccess,
                     onChanged: (value) {
-                    
                       menuAccessProvider.updatetrxnaccess(menu, value ?? false);
                     },
                   ),

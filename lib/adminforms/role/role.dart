@@ -1,3 +1,4 @@
+import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
@@ -12,38 +13,26 @@ class RoleFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final roleProvider = Provider.of<RoleProvider>(context);
     double defaultwidth = SizeConfig.screenWidth;
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Role Details'),
-        ),
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
+    return Background(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: SizeConfig.screenHeight,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ElevatedButton(
-                  style: buttonStyleGrey,
-                  onPressed: () {
-                    roleProvider.showForm();
-                    roleProvider.resetForm();
-                  },
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add, color: Colors.white, size: 18),
-                      SizedBox(width: 8),
-                      Text(
-                        'Add a new Role',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                TextButton(
+                    onPressed: () {
+                      roleProvider.showForm();
+                      roleProvider.resetForm();
+                    },
+                    child: const Text(
+                      '+ Add a new role',
+                      style: appstyle,
+                    )),
                 const SizedBox(height: 16.0),
                 if (roleProvider.isFormVisible)
                   _buildRoleForm(context, roleProvider),
@@ -73,7 +62,9 @@ class RoleFormPage extends StatelessWidget {
               ],
             ),
           ),
-        ));
+        ),
+      ],
+    ));
   }
 
   Widget _buildRoleForm(BuildContext context, RoleProvider roleProvider) {
