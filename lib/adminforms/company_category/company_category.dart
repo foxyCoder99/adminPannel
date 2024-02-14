@@ -3,6 +3,7 @@ import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/companycategory_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
@@ -46,14 +47,11 @@ class CompanyCategory extends StatelessWidget {
                         vertical: defaultPadding,
                         horizontal: defaultPadding,
                       ),
-                      child: TextField(
+                      child: CustomSearch(
                         onChanged: (value) {
                           companycategoryProvider.searchQuery = value;
                         },
-                        decoration: const InputDecoration(
-                          labelText: 'Search by company category name ...',
-                          prefixIcon: Icon(Icons.search),
-                        ),
+                        hintText: "search category name ...",
                       ),
                     ),
                   ),

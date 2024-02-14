@@ -2,6 +2,7 @@ import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/drive_providers/sharefile_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:file_picker/_internal/file_picker_web.dart';
@@ -69,7 +70,7 @@ class DriveUpload extends StatelessWidget {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.grey.shade50,
                             borderRadius: BorderRadius.circular(30),
                             boxShadow: [
                               BoxShadow(
@@ -84,59 +85,14 @@ class DriveUpload extends StatelessWidget {
                             children: [
                               Consumer<DriveUploadProvider>(
                                   builder: (context, driveUploadProvider, _) {
-                                return TextField(
+                                return CustomSearchTextField(
+                                  hintText: 'Search files...',
                                   onChanged: (value) {
                                     driveUploadProvider.searchQuery = value;
                                   },
                                   onTap: (() {
                                     driveUploadProvider.searchFocused = true;
                                   }),
-                                  decoration: InputDecoration(
-                                    fillColor: Colors.grey.shade50,
-                                    hintText: 'Search files...',
-                                    contentPadding: const EdgeInsets.all(8),
-                                    prefixIcon: MouseRegion(
-                                      cursor: SystemMouseCursors.click,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(18),
-                                        ),
-                                        child: const Icon(
-                                          Icons.search,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      onHover: (event) {
-                                        Colors.grey.shade200;
-                                      },
-                                    ),
-                                    filled: true,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 238, 238, 238),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: const BorderSide(
-                                        color:
-                                            Color.fromARGB(255, 238, 238, 238),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey.shade300,
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
                                 );
                               }),
                               Consumer<DriveUploadProvider>(

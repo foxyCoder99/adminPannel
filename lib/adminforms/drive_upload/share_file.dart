@@ -1,5 +1,6 @@
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/drive_providers/sharefile_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class ShareFile extends StatelessWidget {
     final shareFileProvider = Provider.of<ShareFileProvider>(context);
 
     return AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor:AppColors.secondaryBg,
       title: const Text('Share With'),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +34,7 @@ class ShareFile extends StatelessWidget {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryBg,
+                  color: Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: [
                     BoxShadow(
@@ -46,50 +47,8 @@ class ShareFile extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        fillColor: Colors.grey.shade50,
-                        hintText: 'Search files...',
-                        contentPadding: const EdgeInsets.all(8),
-                        prefixIcon: MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: const Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          onHover: (event) {
-                            Colors.grey.shade200;
-                          },
-                        ),
-                        // filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 181, 181, 181),
-                            width: 1,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 181, 181, 181),
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 181, 181, 181),
-                            width: 1,
-                          ),
-                        ),
-                      ),
+                    CustomSearchTextField(
+                      hintText: 'Search Emails...',
                       onChanged: (value) {
                         shareFileProvider.searchEmailQuery = value;
                       },
@@ -131,7 +90,6 @@ class ShareFile extends StatelessWidget {
                   return Consumer<ShareFileProvider>(
                       builder: (context, ShareFileProvider, _) {
                     if (accountcode != email.accountcode) {
-                      // print({'email', email.accountcode, email.accountname});
                       return CheckboxListTile(
                           title: Text(email.accountname),
                           subtitle: Text(email.emailid),
@@ -141,7 +99,6 @@ class ShareFile extends StatelessWidget {
                                 email, value ?? false);
                           });
                     } else {
-                      // print({'accountcode', accountcode, email.accountname});
                       return const SizedBox();
                     }
                   });
