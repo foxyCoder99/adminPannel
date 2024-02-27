@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:advisorapp/constants.dart';
 
 class AccountEmployerProvider extends ChangeNotifier {
+
   final List<Accountreport> _accountList = [];
   List<Accountreport> get accountList => _accountList;
   bool _isLoading = false;

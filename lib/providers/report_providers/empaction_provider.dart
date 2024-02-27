@@ -57,14 +57,13 @@ class EmpActionProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = jsonDecode(response.body);
         accounts = jsonData.map((item) => Account.fromJson(item)).toList();
-        _filterAccounts(); // Initial filter based on search query
+        _filterAccounts(); 
         notifyListeners();
       } else {
         throw Exception('Failed to load data: ${response.statusCode}');
       }
     } catch (error) {
       print('Error fetching data: $error');
-      // Handle error gracefully, e.g., show a snackbar or retry logic
     } finally {
       _isLoading = false;
       notifyListeners();

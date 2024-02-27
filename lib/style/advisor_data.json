@@ -1,0 +1,181 @@
+[
+  {
+    "accountcode": "AC-20231206063617013",
+    "accountdata": [
+      {
+        "id": 194,
+        "accountcode": "AC-20231206063617013",
+        "accountname": "JOE",
+        "lastname": "MICHEL",
+        "worktitle": "CEO",
+        "rolewithemployer": [
+          {
+            "rolecode": "RL-20230224174905293",
+            "rolename": "Decision maker",
+            "roletype": "Employer"
+          },
+          {
+            "rolecode": "RL-20230224174921823",
+            "rolename": "Contract Signatory",
+            "roletype": "Employer"
+          }
+        ],
+        "phonenumber": "9658547441",
+        "workemail": "advisor@farangimahal.in",
+        "accountrole": "RL-20230224175000800",
+        "companydomainname": "farangimahal.in",
+        "naicscode": "111120",
+        "companyname": "FARANGI MAHAL",
+        "typeofcompany": "CT-20230317082215680",
+        "companycategory": "CC-20230224174555860",
+        "companyaddress": "LUCKNOW",
+        "companyphonenumber": "9658547441",
+        "accountpaymentinfo": "PC-20230423165319123",
+        "fancyname": "FAIRY TALE",
+        "status": true
+      }
+    ],
+    "employers": [
+      {
+        "companydomain": "lic.com",
+        "companyname": "LIC INDIA",
+        "companyaddress": "LIC INDIA ADDRESS",
+        "companyphoneno": "6525411112",
+        "companytypename": "Government",
+        "companytype": "CT-20230317082215680",
+        "companycategory": "CC-20230224174547353",
+        "categoryname": "Employer",
+        "naicscode": "111110",
+        "eincode": "656854",
+        "partners": [
+          {
+            "partnerdata": {
+              "companydomain": "elitedigital.ai",
+              "companyname": "ELITE DIGITAL",
+              "companyaddress": "NOIDA",
+              "companyphoneno": "6858585847",
+              "companytypename": "Government",
+              "companytype": "CT-20230317082215680",
+              "companycategory": "CC-20230317082543810",
+              "categoryname": "Technology Platform",
+              "naicscode": "111130",
+              "eincode": "654745"
+            }
+          }
+        ]
+      },
+      {
+        "companydomain": "capgemini.com",
+        "companyname": "CAPGEMINI",
+        "companyaddress": "CAPGEMINI ADDRESS",
+        "companyphoneno": "5852545582",
+        "companytypename": "Government",
+        "companytype": "CT-20230317082215680",
+        "companycategory": "CC-20230224174547353",
+        "categoryname": "Employer",
+        "naicscode": "111140",
+        "eincode": "696582",
+        "partners": [
+          {
+            "partnerdata": {
+              "companydomain": "elitedigital.ai",
+              "companyname": "ELITE DIGITAL",
+              "companyaddress": "NOIDA",
+              "companyphoneno": "6858585847",
+              "companytypename": "Government",
+              "companytype": "CT-20230317082215680",
+              "companycategory": "CC-20230317082543810",
+              "categoryname": "Technology Platform",
+              "naicscode": "111130",
+              "eincode": "654745"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "accountcode": "AC-20240222053707020",
+    "accountdata": [
+      {
+        "id": 216,
+        "accountcode": "AC-20240222053707020",
+        "accountname": "Advisor",
+        "lastname": "One",
+        "worktitle": "CTO",
+        "rolewithemployer": [
+          {
+            "rolecode": "RL-20230224174905293",
+            "rolename": "Decision maker",
+            "roletype": "Employer"
+          },
+          {
+            "rolecode": "RL-20240111051814560",
+            "rolename": "Contract signatory",
+            "roletype": "Partner"
+          },
+          {
+            "rolecode": "RL-20240111051759943",
+            "rolename": "Account lead",
+            "roletype": "Partner"
+          }
+        ],
+        "phonenumber": "6965854585",
+        "workemail": "admin@advisorone.com",
+        "accountrole": "RL-20230224175000800",
+        "companydomainname": "advisorone.com",
+        "naicscode": "111130",
+        "companyname": "ADVISOR ONE",
+        "typeofcompany": "CT-20230317082215680",
+        "companycategory": "CC-20230224174555860",
+        "companyaddress": "ADVISOR ONE ADDRESS",
+        "companyphonenumber": "633633521",
+        "accountpaymentinfo": "PC-20230423165319123",
+        "fancyname": "BRINJAL POTATO",
+        "status": true
+      }
+    ],
+    "employers": [
+      {
+        "companydomain": "employerone.com",
+        "companyname": "Employer ONE",
+        "companyaddress": "EMP ONE ADDRESS",
+        "companyphoneno": "6965854554",
+        "companytypename": "Sole proprietorship",
+        "companytype": "CT-20230317082104087",
+        "companycategory": "CC-20230224174547353",
+        "categoryname": "Employer",
+        "naicscode": "111120",
+        "eincode": "325214",
+        "partners": [
+          {
+            "partnerdata": {
+              "companydomain": "elitedigital.ai",
+              "companyname": "ELITE DIGITAL",
+              "companyaddress": "NOIDA",
+              "companyphoneno": "6858585847",
+              "companytypename": "Government",
+              "companytype": "CT-20230317082215680",
+              "companycategory": "CC-20230317082543810",
+              "categoryname": "Technology Platform",
+              "naicscode": "111130",
+              "eincode": "654745"
+            }
+          },
+          {
+            "partnerdata": {
+              "companydomain": "medicalprovider.com",
+              "companyname": "",
+              "companyaddress": "",
+              "companyphoneno": "",
+              "companytypename": "",
+              "companytype": "",
+              "companycategory": "CC-20230317082631633",
+              "categoryname": "Medical Provider"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

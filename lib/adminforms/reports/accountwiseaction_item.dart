@@ -1,11 +1,12 @@
+import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/report_providers/account_actionitem_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-final TextEditingController _searchController = TextEditingController();
 
 class AccountActionItem extends StatelessWidget {
   const AccountActionItem({Key? key}) : super(key: key);
@@ -46,15 +47,15 @@ class AccountActionItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDateFilter(
-                    context, accountActionItemProvider, _searchController),
+                _buildDateFilter(context, accountActionItemProvider),
                 const SizedBox(height: 16.0),
                 _buildSearchBar(accountActionItemProvider),
                 const SizedBox(height: 16.0),
                 Consumer<AccountActionItemProvider>(
                   builder: (context, provider, _) {
                     if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const CirlularLoader();
+                      
                     } else {
                       return Expanded(
                         child: _buildAccountDataTable(
@@ -73,19 +74,18 @@ class AccountActionItem extends StatelessWidget {
   }
 
   Widget _buildSearchBar(AccountActionItemProvider accountActionItemProvider) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: defaultPadding,
-        horizontal: defaultPadding,
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          accountActionItemProvider.searchQuery = value;
-        },
-        decoration: const InputDecoration(
-          labelText: 'Search by account name, item name, etc.',
-          prefixIcon: Icon(Icons.search),
+    return SizedBox(
+      width: SizeConfig.screenWidth/2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: defaultPadding,
+          horizontal: defaultPadding,
+        ),
+        child: CustomSearch(
+          onChanged: (value) {
+            accountActionItemProvider.searchQuery = value;
+          },
+          hintText: 'Search by account name, item name, etc.',
         ),
       ),
     );
@@ -94,7 +94,6 @@ class AccountActionItem extends StatelessWidget {
   Widget _buildDateFilter(
     BuildContext context,
     AccountActionItemProvider accountActionItemProvider,
-    TextEditingController searchController,
   ) {
     return Row(
       children: [

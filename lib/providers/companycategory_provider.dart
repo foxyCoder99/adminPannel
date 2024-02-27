@@ -19,7 +19,7 @@ class CompanyCategoryProvider extends ChangeNotifier {
 
   bool get isEditing => _isEditing;
   bool get isFormVisible => _isFormVisible;
-  bool _isLoading = false;
+   bool _isLoading = false;
   bool get isLoading => _isLoading;
   bool validateCompanyTypeForm() {
     return formKey.currentState?.validate() ?? false;
@@ -50,16 +50,17 @@ class CompanyCategoryProvider extends ChangeNotifier {
 
   List<Category> get filteredCompanyTypeList {
     return _companyCategories
-        .where((Category) =>
-            Category.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where((category) =>
+            category.name.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
   }
 
   Future<void> fetchCompanyCategories() async {
     try {
+      _isLoading = true;
+      notifyListeners();
       var response = await http.post(
-        Uri.parse(
-            '${webApiserviceURL}Advisor/ReadAdvisorCompanyCategoryM'),
+        Uri.parse('${webApiserviceURL}Advisor/ReadAdvisorCompanyCategoryM'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -85,6 +86,9 @@ class CompanyCategoryProvider extends ChangeNotifier {
     } catch (error) {
       print('Error fetching company categories: $error');
       throw Exception('Error fetching company categories');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -96,8 +100,7 @@ class CompanyCategoryProvider extends ChangeNotifier {
         await updateCompanyCategory(_editingId, categoryName);
       } else {
         var response = await http.post(
-          Uri.parse(
-              '${webApiserviceURL}Advisor/InsertAdvisorCompanyCategoryM'),
+          Uri.parse('${webApiserviceURL}Advisor/InsertAdvisorCompanyCategoryM'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -133,8 +136,7 @@ class CompanyCategoryProvider extends ChangeNotifier {
       String categoryId, String updatedCategoryName) async {
     try {
       var response = await http.post(
-        Uri.parse(
-            '${webApiserviceURL}Advisor/UpdateAdvisorCompanyCategoryM'),
+        Uri.parse('${webApiserviceURL}Advisor/UpdateAdvisorCompanyCategoryM'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

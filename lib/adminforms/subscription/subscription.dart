@@ -1,7 +1,9 @@
 import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/subscription_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
@@ -51,27 +53,6 @@ class SubscriptionFormPage extends StatelessWidget {
                         '+ Add a new subscription',
                         style: appstyle,
                       )),
-                  /* ElevatedButton(
-                    style: buttonStyleGrey,
-                    onPressed: () {
-                      subscriptionProvider.showForm();
-                      subscriptionProvider.resetForm();
-                    },
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add, color: Colors.white, size: 18),
-                        SizedBox(width: 8),
-                        Text(
-                          '+ add a new subscription',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ), */
                   const SizedBox(height: 16.0),
                   if (subscriptionProvider.isFormVisible)
                     _buildSubscriptionForm(context, subscriptionProvider),
@@ -82,21 +63,18 @@ class SubscriptionFormPage extends StatelessWidget {
                         vertical: defaultPadding,
                         horizontal: defaultPadding,
                       ),
-                      child: TextField(
+                      child: CustomSearch(
                         onChanged: (value) {
                           subscriptionProvider.searchQuery = value;
                         },
-                        decoration: const InputDecoration(
-                          labelText:
-                              'Search by subscription type, subscription name ...',
-                          prefixIcon: Icon(Icons.search),
-                        ),
+                        hintText:
+                            'Search by subscription type, subscription name ...',
                       ),
                     ),
                   ),
                   const SizedBox(height: 8.0),
                   if (subscriptionProvider.isLoading)
-                    const Center(child: CircularProgressIndicator())
+                    const CirlularLoader()
                   else
                     _buildSubscriptionList(context, subscriptionProvider),
                 ],

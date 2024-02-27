@@ -1,7 +1,9 @@
 import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/roleform_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
@@ -43,20 +45,17 @@ class RoleFormPage extends StatelessWidget {
                       vertical: defaultPadding,
                       horizontal: defaultPadding,
                     ),
-                    child: TextField(
+                    child: CustomSearch(
                       onChanged: (value) {
                         roleProvider.searchQuery = value;
                       },
-                      decoration: const InputDecoration(
-                        labelText: 'Search by role name',
-                        prefixIcon: Icon(Icons.search),
-                      ),
+                      hintText: 'Search by role name',
                     ),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 if (roleProvider.isLoading)
-                  const Center(child: CircularProgressIndicator())
+                  const CirlularLoader()
                 else
                   _buildRoleDataTable(context, roleProvider),
               ],

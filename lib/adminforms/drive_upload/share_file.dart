@@ -21,7 +21,7 @@ class ShareFile extends StatelessWidget {
     final shareFileProvider = Provider.of<ShareFileProvider>(context);
 
     return AlertDialog(
-      backgroundColor:AppColors.secondaryBg,
+      backgroundColor: AppColors.secondaryBg,
       title: const Text('Share With'),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,6 @@
+import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/report_providers/employerpartner_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,19 +44,19 @@ class EmployerPartner extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: defaultPadding,
-                    horizontal: defaultPadding,
-                  ),
-                  child: TextField(
-                    onChanged: (value) {
-                      employerPartnerProvider.searchQuery = value;
-                    },
-                    decoration: const InputDecoration(
-                      labelText:
+                SizedBox(
+                  width: SizeConfig.screenWidth/2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: defaultPadding,
+                      horizontal: defaultPadding,
+                    ),
+                    child: CustomSearch(
+                      onChanged: (value) {
+                        employerPartnerProvider.searchQuery = value;
+                      },
+                      hintText:
                           'Search by account name, role name, company type ',
-                      prefixIcon: Icon(Icons.search),
                     ),
                   ),
                 ),

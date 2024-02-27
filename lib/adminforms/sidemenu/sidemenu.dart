@@ -371,6 +371,15 @@ class AdminSideMenu extends StatelessWidget {
                               sidebarProvider.selectedMenu = 'Payment Detail';
                             },
                           ),
+                            buildReportSubMenu(
+                            context,
+                            'TREE',
+                            'TREE',
+                            Icons.payments,
+                            () {
+                              sidebarProvider.selectedMenu = 'TREE';
+                            },
+                          ),
                           buildReportSubMenu(
                             context,
                             'Account Detail',

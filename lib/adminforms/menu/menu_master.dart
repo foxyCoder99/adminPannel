@@ -1,7 +1,9 @@
 import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/menu_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
@@ -45,21 +47,18 @@ class MenuFormPage extends StatelessWidget {
                     ),
                     child: SizedBox(
                       width: defaultwidth / 3,
-                      child: TextField(
+                      child: CustomSearch(
                         onChanged: (value) {
                           menuProvider.searchQuery = value;
                         },
-                        decoration: const InputDecoration(
-                          labelText: 'Search by menu name',
-                          prefixIcon: Icon(Icons.search),
-                        ),
+                        hintText: 'Search by menu name',
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 8.0),
                 if (menuProvider.isLoading)
-                  const Center(child: CircularProgressIndicator())
+                  const CirlularLoader()
                 else
                   _buildmenuDataTable(context, menuProvider),
               ],

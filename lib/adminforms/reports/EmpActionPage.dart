@@ -1,3 +1,6 @@
+import 'package:advisorapp/config/size_config.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:advisorapp/constants.dart';
@@ -74,24 +77,24 @@ class EmpActionPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: defaultPadding,
-              horizontal: defaultPadding,
-            ),
-            child: TextField(
-              onChanged: (value) {
-                provider.searchQuery = value;
-              },
-              decoration: const InputDecoration(
-                labelText: 'Search by account name, role name ',
-                prefixIcon: Icon(Icons.search),
+          SizedBox(
+            width: SizeConfig.screenWidth/2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: defaultPadding,
+                horizontal: defaultPadding,
+              ),
+              child: CustomSearch(
+                onChanged: (value) {
+                  provider.searchQuery = value;
+                },
+                hintText: 'Search by account name, role name ',
               ),
             ),
           ),
           Expanded(
             child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const CirlularLoader()
                 : _buildAccountDataTable(context, provider),
           ),
           const SizedBox(height: 16.0),

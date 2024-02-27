@@ -1,5 +1,8 @@
 // account_invitation.dart
+import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/report_providers/accountinvitation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -45,9 +48,10 @@ class AccountInvitation extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildDateFilter(context, accountInvitationProvider),
+                const SizedBox(height: 16.0),
                 _buildSearchBar(context, accountInvitationProvider),
                 if (accountInvitationProvider.isLoading)
-                  const Center(child: CircularProgressIndicator())
+                  const CirlularLoader()
                 else
                   Expanded(
                     child: _buildAccountDataTable(
@@ -66,15 +70,15 @@ class AccountInvitation extends StatelessWidget {
     BuildContext context,
     AccountInvitationProvider accountInvitationProvider,
   ) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        onChanged: (value) {
-          accountInvitationProvider.setSearchTerm(value);
-        },
-        decoration: const InputDecoration(
+    return SizedBox(
+      width: SizeConfig.screenWidth / 2,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CustomSearch(
+          onChanged: (value) {
+            accountInvitationProvider.setSearchTerm(value);
+          },
           hintText: 'Search by account name or email',
-          prefixIcon: Icon(Icons.search),
         ),
       ),
     );

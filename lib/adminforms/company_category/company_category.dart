@@ -2,6 +2,7 @@
 import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
 import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/companycategory_provider.dart';
@@ -57,7 +58,7 @@ class CompanyCategory extends StatelessWidget {
                   ),
                   const SizedBox(height: 8.0),
                   if (companycategoryProvider.isLoading)
-                    const Center(child: CircularProgressIndicator())
+                        const CirlularLoader()
                   else
                     _buildCompanyDataTable(context, companycategoryProvider),
                 ],

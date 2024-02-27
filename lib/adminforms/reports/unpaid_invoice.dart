@@ -1,5 +1,7 @@
 // unpaid_invoice.dart
+import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/report_providers/unpaidinvoice_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,19 +42,18 @@ class UnpaidInvoice extends StatelessWidget {
   }
 
   Widget _buildSearchBar(UnpaidInvoiceProvider unpaidInvoiceProvider) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: defaultPadding,
-        horizontal: defaultPadding,
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          unpaidInvoiceProvider.fetchUnpaidInvoiceList();
-        },
-        decoration: const InputDecoration(
-          labelText: 'Search by ID, Account Code, etc.',
-          prefixIcon: Icon(Icons.search),
+    return SizedBox(
+      width: SizeConfig.screenWidth/2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: defaultPadding,
+          horizontal: defaultPadding,
+        ),
+        child: CustomSearch(
+          onChanged: (value) {
+            unpaidInvoiceProvider.fetchUnpaidInvoiceList();
+          },
+          hintText: 'Search by ID, Account Code, etc.',
         ),
       ),
     );

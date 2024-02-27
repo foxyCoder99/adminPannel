@@ -1,11 +1,12 @@
 // account_employer.dart
+import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/report_providers/accountemployer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-final TextEditingController _searchController = TextEditingController();
 
 class AccountEmployer extends StatelessWidget {
   const AccountEmployer({Key? key}) : super(key: key);
@@ -53,7 +54,7 @@ class AccountEmployer extends StatelessWidget {
                 Consumer<AccountEmployerProvider>(
                   builder: (context, provider, _) {
                     if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const CirlularLoader();
                     } else {
                       return Expanded(
                         child: _buildAccountDataTable(
@@ -72,19 +73,18 @@ class AccountEmployer extends StatelessWidget {
   }
 
   Widget _buildSearchBar(AccountEmployerProvider accountEmployerProvider) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: defaultPadding,
-        horizontal: defaultPadding,
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) {
-          accountEmployerProvider.searchQuery = value;
-        },
-        decoration: const InputDecoration(
-          labelText: 'Search by account name, employer name, etc.',
-          prefixIcon: Icon(Icons.search),
+    return SizedBox(
+      width: SizeConfig.screenWidth/2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: defaultPadding,
+          horizontal: defaultPadding,
+        ),
+        child: CustomSearch(
+          onChanged: (value) {
+            accountEmployerProvider.searchQuery = value;
+          },
+          hintText: 'Search by account name, employer name, etc.',
         ),
       ),
     );

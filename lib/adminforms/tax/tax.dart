@@ -1,5 +1,6 @@
 import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:advisorapp/providers/taxform_provider.dart';
@@ -110,7 +111,7 @@ class TaxFormpage extends StatelessWidget {
                     ),
                   const SizedBox(height: 16.0),
                   if (taxProvider.isLoading) ...[
-                    const Center(child: CircularProgressIndicator()),
+                    const CirlularLoader()
                   ] else ...[
                     if (taxProvider.taxDetails.isNotEmpty) ...[
                       DataTable(

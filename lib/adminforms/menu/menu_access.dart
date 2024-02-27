@@ -1,6 +1,7 @@
 import 'package:advisorapp/component/background.dart';
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/cirlular_loader.dart';
 import 'package:advisorapp/custom/custom_text_decoration.dart';
 import 'package:advisorapp/providers/menuaccess_provider.dart';
 import 'package:advisorapp/style/colors.dart';
@@ -20,7 +21,6 @@ class MenuAccessPage extends StatelessWidget {
         children: [
           SizedBox(
             height: SizeConfig.screenHeight,
-            // width: SizeConfig.screenWidth / 2,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -29,7 +29,7 @@ class MenuAccessPage extends StatelessWidget {
                   _buildRoleDropdown(menuAccessProvider),
                   const SizedBox(height: 16.0),
                   if (menuAccessProvider.isLoading)
-                    const Center(child: CircularProgressIndicator())
+                    const CirlularLoader()
                   else
                     _buildMenuDataTable(menuAccessProvider),
                   const SizedBox(height: 16.0),
@@ -43,7 +43,6 @@ class MenuAccessPage extends StatelessWidget {
                           style: buttonStyleBlue,
                           onPressed: () {
                             if (menuAccessProvider.menuList.isNotEmpty) {
-                              // menuAccessProvider.updateCheckedMenus(context);
                             }
                           },
                           child: const Text('Update',
