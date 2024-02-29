@@ -1,13 +1,12 @@
 import 'package:advisorapp/adminforms/drive_upload/drive_uploads.dart';
-import 'package:advisorapp/adminforms/reports/AccountPage.dart';
-import 'package:advisorapp/adminforms/reports/EmpActionPage.dart';
-import 'package:advisorapp/adminforms/reports/account_employer.dart';
-import 'package:advisorapp/adminforms/reports/employer_partner.dart';
 import 'package:advisorapp/adminforms/reports/account_invitation.dart';
-import 'package:advisorapp/adminforms/reports/accountwiseaction_item.dart';
+import 'package:advisorapp/adminforms/reports/EmpActionPage.dart';
+// import 'package:advisorapp/adminforms/reports/AccountPage.dart';
+// import 'package:advisorapp/adminforms/reports/account_employer.dart';
+// import 'package:advisorapp/adminforms/reports/employer_partner.dart';
+// import 'package:advisorapp/adminforms/reports/accountwiseaction_item.dart';
 import 'package:advisorapp/adminforms/company_type/company_type.dart';
-import 'package:advisorapp/adminforms/reports/expandable_table.dart';
-import 'package:advisorapp/adminforms/reports/fancytree_view.dart';
+import 'package:advisorapp/adminforms/reports/report_table.dart';
 import 'package:advisorapp/adminforms/reports/unpaid_invoice.dart';
 import 'package:advisorapp/adminforms/menu/menu_access.dart';
 import 'package:advisorapp/adminforms/menu/menu_master.dart';
@@ -63,38 +62,42 @@ class CentralForm extends StatelessWidget {
                                                   ? const MenuAccessPage()
                                                   : (menuProvider
                                                               .selectedMenu ==
-                                                          "TREE")
+                                                          'Advisor Report')
                                                       ? ReportTable()
                                                       : (menuProvider
                                                                   .selectedMenu ==
                                                               "Payment Detail")
                                                           ? const PaymentReportDetails()
+                                                          // : (menuProvider
+                                                          //             .selectedMenu ==
+                                                          //         "Account Detail")
+                                                          //     ? const AccountPage()
+                                                          //     : (menuProvider
+                                                          //                 .selectedMenu ==
+                                                          //             "Account Employer")
+                                                          //         ? const AccountEmployer()
                                                           : (menuProvider
                                                                       .selectedMenu ==
-                                                                  "Account Detail")
-                                                              ? const AccountPage()
+                                                                  "Tax")
+                                                              ? const TaxFormpage()
                                                               : (menuProvider
                                                                           .selectedMenu ==
-                                                                      "Account Employer")
-                                                                  ? const AccountEmployer()
+                                                                      "Drive")
+                                                                  ? const DriveUpload()
                                                                   : (menuProvider
                                                                               .selectedMenu ==
-                                                                          "Tax")
-                                                                      ? const TaxFormpage()
+                                                                          "Unpaid Invoice")
+                                                                      ? const UnpaidInvoice()
+                                                                      // : (menuProvider.selectedMenu == "Employer Partner")
+                                                                      //     ? const EmployerPartner()
                                                                       : (menuProvider.selectedMenu ==
-                                                                              "Drive")
-                                                                          ? const DriveUpload()
-                                                                          : (menuProvider.selectedMenu == "Unpaid Invoice")
-                                                                              ? const UnpaidInvoice()
-                                                                              : (menuProvider.selectedMenu == "Employer Partner")
-                                                                                  ? const EmployerPartner()
-                                                                                  : (menuProvider.selectedMenu == "Account Invitation")
-                                                                                      ? const AccountInvitation()
-                                                                                      : (menuProvider.selectedMenu == "Account Wise Item")
-                                                                                          ? const AccountActionItem()
-                                                                                          : (menuProvider.selectedMenu == "Employer Wise Item")
-                                                                                              ? const EmpActionPage()
-                                                                                              : const Text('ADMIN PORTAL'));
+                                                                              "Account Invitation")
+                                                                          ? const AccountInvitation()
+                                                                          // : (menuProvider.selectedMenu == "Account Wise Item")
+                                                                          //     ? const AccountActionItem()
+                                                                          : (menuProvider.selectedMenu == "Employer Wise Item")
+                                                                              ? const EmpActionPage()
+                                                                              : const Text('ADMIN PORTAL'));
                 }),
               ))
         ]));

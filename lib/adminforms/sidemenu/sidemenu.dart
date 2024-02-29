@@ -78,7 +78,7 @@ class AdminSideMenu extends StatelessWidget {
                               sidebarProvider.selectedMenu = 'Company Type';
                             },
                           ),
-                                   buildReportSubMenu(
+                          buildReportSubMenu(
                             context,
                             'Company Category',
                             'Company Category',
@@ -371,42 +371,42 @@ class AdminSideMenu extends StatelessWidget {
                               sidebarProvider.selectedMenu = 'Payment Detail';
                             },
                           ),
-                            buildReportSubMenu(
-                            context,
-                            'TREE',
-                            'TREE',
-                            Icons.payments,
-                            () {
-                              sidebarProvider.selectedMenu = 'TREE';
-                            },
-                          ),
                           buildReportSubMenu(
                             context,
-                            'Account Detail',
-                            'Account Detail',
-                            Icons.account_balance_wallet,
+                            'Advisor Report',
+                            'Advisor Report',
+                            Icons.table_view,
                             () {
-                              sidebarProvider.selectedMenu = 'Account Detail';
+                              sidebarProvider.selectedMenu = 'Advisor Report';
                             },
                           ),
-                          buildReportSubMenu(
-                            context,
-                            'Account Employer',
-                            'Account Employer',
-                            Icons.account_balance,
-                            () {
-                              sidebarProvider.selectedMenu = 'Account Employer';
-                            },
-                          ),
-                          buildReportSubMenu(
-                            context,
-                            'Employer Partner',
-                            'Employer Partner',
-                            Icons.work,
-                            () {
-                              sidebarProvider.selectedMenu = 'Employer Partner';
-                            },
-                          ),
+                          // buildReportSubMenu(
+                          //   context, 
+                          //   'Account Detail',
+                          //   'Account Detail',
+                          //   Icons.account_balance_wallet,
+                          //   () {
+                          //     sidebarProvider.selectedMenu = 'Account Detail';
+                          //   },
+                          // ),
+                          // buildReportSubMenu(
+                          //   context,
+                          //   'Account Employer',
+                          //   'Account Employer',
+                          //   Icons.account_balance,
+                          //   () {
+                          //     sidebarProvider.selectedMenu = 'Account Employer';
+                          //   },
+                          // ),
+                          // buildReportSubMenu(
+                          //   context,
+                          //   'Employer Partner',
+                          //   'Employer Partner',
+                          //   Icons.work,
+                          //   () {
+                          //     sidebarProvider.selectedMenu = 'Employer Partner';
+                          //   },
+                          // ),
                           buildReportSubMenu(
                             context,
                             'Account Invitation',
@@ -417,16 +417,16 @@ class AdminSideMenu extends StatelessWidget {
                                   'Account Invitation';
                             },
                           ),
-                          buildReportSubMenu(
-                            context,
-                            'Account Wise Item',
-                            'Account Wise Item',
-                            Icons.account_tree_rounded,
-                            () {
-                              sidebarProvider.selectedMenu =
-                                  'Account Wise Item';
-                            },
-                          ),
+                          // buildReportSubMenu(
+                          //   context,
+                          //   'Account Wise Item',
+                          //   'Account Wise Item',
+                          //   Icons.account_tree_rounded,
+                          //   () {
+                          //     sidebarProvider.selectedMenu =
+                          //         'Account Wise Item';
+                          //   },
+                          // ),
                           buildReportSubMenu(
                             context,
                             'Employer Wise Item',

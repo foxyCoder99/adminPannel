@@ -1,3 +1,7 @@
+import 'package:advisorapp/component/background.dart';
+import 'package:advisorapp/config/size_config.dart';
+import 'package:advisorapp/constants.dart';
+import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/models/admin/report_modals/reporttable_modal.dart';
 import 'package:advisorapp/providers/report_provider.dart';
 import 'package:advisorapp/style/colors.dart';
@@ -6,7 +10,35 @@ import 'package:flutter_expandable_table/flutter_expandable_table.dart';
 import 'package:provider/provider.dart';
 
 class ReportTable extends StatelessWidget {
-  const ReportTable({Key? key}) : super(key: key);
+  late final ExpandableTableController controller;
+  final List<String> accountDataHeaders = [
+    'accountname',
+    "worktitle",
+    "phonenumber",
+    "workemail",
+    "companydomainname",
+    "naicscode",
+    "companyname",
+    "companyaddress",
+    "companyphonenumber",
+    "fancyname",
+  ];
+
+  ReportTable({Key? key}) : super(key: key) {
+    controller = ExpandableTableController(
+      firstHeaderCell: _buildHeaderCell('Advisor Data'),
+      rows: [],
+      headers: accountDataHeaders
+          .map(
+            (key) => ExpandableTableHeader(
+              cell: _buildHeaderCell(key),
+            ),
+          )
+          .toList(),
+      headerHeight: 80,
+      defaultsColumnWidth: 220,
+    );
+  }
 
   String _getValueForHeader(String header, AccountData accountData) {
     switch (header) {
@@ -18,28 +50,28 @@ class ReportTable extends StatelessWidget {
         return accountData.phonenumber ?? '';
       case 'workemail':
         return accountData.workemail ?? '';
-      case 'accountrole':
-        return accountData.accountrole ?? '';
+      // case 'accountrole':
+      //   return accountData.accountrole ?? '';
       case 'companydomainname':
         return accountData.companydomainname ?? '';
       case 'naicscode':
         return accountData.naicscode ?? '';
       case 'companyname':
         return accountData.companyname ?? '';
-      case 'typeofcompany':
-        return accountData.typeofcompany ?? '';
-      case 'companycategory':
-        return accountData.companycategory ?? '';
+      // case 'typeofcompany':
+      //   return accountData.typeofcompany ?? '';
+      // case 'companycategory':
+      //   return accountData.companycategory ?? '';
       case 'companyaddress':
         return accountData.companyaddress ?? '';
       case 'companyphonenumber':
         return accountData.companyphonenumber ?? '';
-      case 'accountpaymentinfo':
-        return accountData.accountpaymentinfo ?? '';
+      // case 'accountpaymentinfo':
+      //   return accountData.accountpaymentinfo ?? '';
       case 'fancyname':
         return accountData.fancyname ?? '';
-      case 'status':
-        return accountData.status.toString();
+      // case 'status':
+      //   return accountData.status.toString();
       default:
         return '';
     }
@@ -79,12 +111,15 @@ class ReportTable extends StatelessWidget {
           )
         : ExpandableTableCell(
             child: DefaultCellCard(
+              color: Color.fromRGBO(163, 175, 198, 1),
               child: Center(
                 child: Text(
                   content.toUpperCase(),
                   style: const TextStyle(
-                      color: Colors.blue,
+                      color: Colors.white,
+                      // color: Colors.blue,
                       fontSize: 14,
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -100,9 +135,10 @@ class ReportTable extends StatelessWidget {
           )
         : ExpandableTableCell(
             child: DefaultCellCard(
+              color: Color.fromARGB(255,233,236,245),
               child: Center(
                 child: Text(
-                  content,
+                  content.toUpperCase(),
                   style: const TextStyle(
                       color: Color.fromARGB(255, 3, 149, 129),
                       fontSize: 14,
@@ -113,16 +149,17 @@ class ReportTable extends StatelessWidget {
           );
   }
 
-  ExpandableTableCell _buildFirstRowCell(String text) {
-    return ExpandableTableCell(
-      builder: (context, details) => DefaultCellCard(
+  ExpandableTableCell _buildFirstRowCell(String imageUrl) {
+    return ExpandableTableCell(builder: (context, details) {
+      return DefaultCellCard(
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child: Row(
             children: [
               SizedBox(
                 width: 24 * details.row!.address.length.toDouble(),
-                child: details.row?.children != null
+                child: details.row?.children != null &&
+                        details.row?.visible == true
                     ? Align(
                         alignment: Alignment.centerRight,
                         child: AnimatedRotation(
@@ -137,12 +174,19 @@ class ReportTable extends StatelessWidget {
                       )
                     : null,
               ),
+              // (imageUrl == 'Account Data')
+              //     ? const CircleAvatar(
+              //         radius: 16,
+              //         backgroundImage: NetworkImage(
+              //             'https://via.placeholder.com/150'),
+              //       )
+              //     :
               Text(
-                text,
+                imageUrl,
                 style: TextStyle(
-                    color: text == 'Account Data'
+                    color: imageUrl == 'Account Data'
                         ? Colors.blue
-                        : text == 'Employer Data'
+                        : imageUrl == 'Employer Data'
                             ? const Color.fromARGB(255, 3, 149, 129)
                             : const Color.fromARGB(255, 229, 168, 0),
                     fontSize: 14,
@@ -151,22 +195,22 @@ class ReportTable extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   List<ExpandableTableRow> _generateAccountDataRow(
-      List<String> accountDataHeaders,
-      List<Account> data,
-      List<Employer> employerDataList) {
+    List<String> accountDataHeaders,
+    List<Account> data,
+  ) {
     final List<String> employerDataHeaders = [
       'companydomain',
       'companyname',
       'companyaddress',
       'companyphoneno',
       'companytypename',
-      'companytype',
-      'companycategory',
+      // 'companytype',
+      // 'companycategory',
       'categoryname',
       'naicscode',
       'eincode',
@@ -176,7 +220,6 @@ class ReportTable extends StatelessWidget {
         .map((account) {
           final List<AccountData> accountDataList = account.accountdata;
           final List<Employer> employerDataList = account.employers;
-
           return accountDataList.map((accountData) {
             return ExpandableTableRow(
               firstCell: _buildFirstRowCell('Account Data'),
@@ -244,8 +287,8 @@ class ReportTable extends StatelessWidget {
         'companyaddress',
         'companyphoneno',
         'companytypename',
-        'companytype',
-        'companycategory',
+        // 'companytype',
+        // 'companycategory',
         'categoryname',
         'naicscode',
         'eincode',
@@ -269,66 +312,97 @@ class ReportTable extends StatelessWidget {
     return rows;
   }
 
-  Widget _buildExpandableTable(List<Account> data) {
-    final account = data.first;
-    final List<AccountData> accountDataList = account.accountdata;
-    final List<Employer> employerDataList = account.employers;
-    if (accountDataList.isNotEmpty) {
-      final List<String> accountDataHeaders = [
-        'accountname',
-        "worktitle",
-        "phonenumber",
-        "workemail",
-        "accountrole",
-        "companydomainname",
-        "naicscode",
-        "companyname",
-        "typeofcompany",
-        "companycategory",
-        "companyaddress",
-        "companyphonenumber",
-        "accountpaymentinfo",
-        "fancyname",
-        "status"
-      ];
-      List<ExpandableTableHeader> headers = accountDataHeaders
-          .map(
-            (key) => ExpandableTableHeader(
-              cell: _buildHeaderCell(key),
-            ),
-          )
-          .toList();
-      return ExpandableTable(
-        firstHeaderCell: _buildHeaderCell('Advisor Data'),
-        rows:
-            _generateAccountDataRow(accountDataHeaders, data, employerDataList),
-        headers: headers,
-        headerHeight: 80,
-        defaultsColumnWidth: 220,
-      );
-    } else {
-      return const SizedBox();
-    }
+  Widget _buildExpandableTable(ReportProvider reportProvider) {
+    controller.allRows.clear();
+    controller.rows = _generateAccountDataRow(
+        accountDataHeaders, reportProvider.filteredAccount);
+
+    return ExpandableTable(
+      controller: controller,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final reportProvider = Provider.of<ReportProvider>(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expandable Table'),
-      ),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: reportProvider.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(), // Show loader
-                  )
-                : _buildExpandableTable(reportProvider.data),
+    return Background(
+      child: SizedBox(
+        height: SizeConfig.screenHeight,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: SizeConfig.screenWidth / 3,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: defaultPadding,
+                        ),
+                        child: CustomSearch(
+                          onChanged: (value) {
+                            reportProvider.searchQuery = value;
+                          },
+                          hintText: 'Search by account name, work email ...',
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: defaultPadding,
+                      ),
+                      child: TextButton.icon(
+                        style: buttonStyleBlue,
+                        onPressed: () => reportProvider.exportToExcel(context),
+                        icon: Image.asset(
+                          'assets/excel.png',
+                          width: 24,
+                          height: 24,
+                        ),
+                        label: const Text(
+                          'Download',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                reportProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: defaultPadding,
+                          horizontal: defaultPadding,
+                        ),
+                        child: SingleChildScrollView(
+                            child: SizedBox(
+                                height: MediaQuery.of(context).size.height,
+                                child: Consumer<ReportProvider>(
+                                    builder: (context, reportProvider, _) {
+                                  return reportProvider
+                                          .filteredAccount.isNotEmpty
+                                      ? _buildExpandableTable(reportProvider)
+                                      : const Center(
+                                          child: Text(
+                                            'No Data Available',
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        );
+                                }))),
+                      )
+              ],
+            ),
           ),
         ),
       ),
@@ -338,9 +412,11 @@ class ReportTable extends StatelessWidget {
 
 class DefaultCellCard extends StatelessWidget {
   final Widget child;
+  final Color color;
 
   const DefaultCellCard({
     Key? key,
+    this.color = Colors.white54,
     required this.child,
   }) : super(key: key);
 
@@ -348,7 +424,10 @@ class DefaultCellCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(1),
-      decoration: BoxDecoration(border: Border.all(color: AppColors.secondary)),
+      decoration: BoxDecoration(
+          color: color,
+          border: Border.all(color: AppColors.secondary),
+          borderRadius: const BorderRadius.all(Radius.circular(5))),
       child: child,
     );
   }

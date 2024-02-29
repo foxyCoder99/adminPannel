@@ -29,32 +29,35 @@ class DriveUpload extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                        elevation: 4,
-                        shadowColor: Colors.grey.withOpacity(0.5),
-                        backgroundColor: AppColors.action,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        )),
-                    onPressed: () {
-                      driveUploadProvider.showForm();
-                      driveUploadProvider.resetForm();
-                    },
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'New',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                          elevation: 4,
+                          shadowColor: Colors.grey.withOpacity(0.5),
+                          backgroundColor: AppColors.action,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          )),
+                      onPressed: () {
+                        driveUploadProvider.showForm();
+                        driveUploadProvider.resetForm();
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 8.0),
+                          Text(
+                            'New',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -244,6 +247,34 @@ class DriveUpload extends StatelessWidget {
                                                                     file.accountcode);
                                                           },
                                                         ),
+                                                        if (driveUploadProvider
+                                                                    .determineFiletype(file
+                                                                        .filename)
+                                                                    .toLowerCase() ==
+                                                                'audio' ||
+                                                            driveUploadProvider
+                                                                    .determineFiletype(
+                                                                        file.filename)
+                                                                    .toLowerCase() ==
+                                                                'video')
+                                                          PopupMenuItem(
+                                                            child:
+                                                                const ListTile(
+                                                              title: Text(
+                                                                  'Transcripted Text'),
+                                                              leading: Icon(
+                                                                Icons
+                                                                    .transcribe,
+                                                              ),
+                                                            ),
+                                                            onTap: () {
+                                                              driveUploadProvider.transcription = '';
+                                                              driveUploadProvider
+                                                                  .showTranscriptDialog(
+                                                                      context,
+                                                                      file);
+                                                            },
+                                                          ),
                                                       ],
                                                       offset:
                                                           const Offset(0, 40),
