@@ -111,7 +111,7 @@ class ReportTable extends StatelessWidget {
           )
         : ExpandableTableCell(
             child: DefaultCellCard(
-              color: Color.fromRGBO(163, 175, 198, 1),
+              color: const Color.fromRGBO(163, 175, 198, 1),
               child: Center(
                 child: Text(
                   content.toUpperCase(),
@@ -135,7 +135,7 @@ class ReportTable extends StatelessWidget {
           )
         : ExpandableTableCell(
             child: DefaultCellCard(
-              color: Color.fromARGB(255,233,236,245),
+              color: const Color.fromARGB(255, 233, 236, 245),
               child: Center(
                 child: Text(
                   content.toUpperCase(),
@@ -152,6 +152,7 @@ class ReportTable extends StatelessWidget {
   ExpandableTableCell _buildFirstRowCell(String imageUrl) {
     return ExpandableTableCell(builder: (context, details) {
       return DefaultCellCard(
+        color: const Color.fromARGB(255, 233, 236, 245),
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child: Row(
