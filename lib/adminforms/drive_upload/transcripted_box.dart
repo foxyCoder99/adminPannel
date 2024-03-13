@@ -1,23 +1,34 @@
 import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/models/admin/drive_modals/upload_modal.dart';
+import 'package:advisorapp/providers/drive_providers/driveupload_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class TranscriptBox extends StatelessWidget {
-  final String transcriptText;
   final UploadedFile file;
 
-  const TranscriptBox(
-      {Key? key, required this.transcriptText, required this.file})
-      : super(key: key);
+  const TranscriptBox({Key? key, required this.file}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final driveUploadProvider = Provider.of<DriveUploadProvider>(context);
+    print({
+      'object',
+      file.issuesummary,
+      '------',
+      file.processingstatus,
+      '=----------',
+      file.resolutionsummary
+    });
     return AlertDialog(
       backgroundColor: AppColors.secondaryBg,
-      title: Text('Transcripted Text : ${file.filename}',style: appstyle,),
+      title: Text(
+        'Summary : ${file.filename}',
+        style: appstyle,
+      ),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -34,10 +45,31 @@ class TranscriptBox extends StatelessWidget {
               ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
-                child: Text(
-                  transcriptText,
-                  style: const TextStyle(fontSize: 14),
-                ),
+                child: file.processingstatus == 'completed'
+                    ? Text(
+                        '${file.issuesummary}\n${file.resolutionsummary}',
+                        style: const TextStyle(fontSize: 14),
+                      )
+                    : Center(
+                        child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (file.processingstatus == 'pending')
+                            const CircularProgressIndicator(),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          Text(
+                            file.processingstatus,
+                            style: TextStyle(
+                                fontSize: 22,
+                                color: file.processingstatus == "pending"
+                                    ? Colors.blue
+                                    : Colors.red),
+                          )
+                        ],
+                      )),
               ),
             ),
           ),
@@ -45,20 +77,44 @@ class TranscriptBox extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                style: buttonStyleGreen,
-                onPressed: () {
-                  _copyToClipboard(transcriptText, context);
-                },
-                child: const Text(
-                  'Copy text',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
+              file.processingstatus == "completed"
+                  ? ElevatedButton(
+                      style: buttonStyleGreen,
+                      onPressed: () {
+                        _copyToClipboard(file.resolutionsummary, context);
+                      },
+                      child: const Text(
+                        'Copy to clipboard',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  : file.processingstatus == "pending"
+                      ? ElevatedButton(
+                          style: buttonStyleGreen,
+                          onPressed: null,
+                          child: const Text(
+                            '... Pending',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : ElevatedButton(
+                          style: buttonStyleInvite,
+                          onPressed: () {
+                            driveUploadProvider.reprocessTranscript(
+                                context, file);
+                          },
+                          child: const Text(
+                            'Reprocess Transcription',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
               ElevatedButton(
                 style: buttonStyleRed,
                 onPressed: () {
                   Navigator.pop(context);
+                   driveUploadProvider.reprocessTranscript(
+                                context, file);
+                  driveUploadProvider.fetchUploadedFiles();
                 },
                 child: const Text(
                   'Cancel',

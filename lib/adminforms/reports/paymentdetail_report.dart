@@ -2,10 +2,10 @@ import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/providers/report_providers/paymentreport_provider.dart';
+import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 
 class PaymentReportDetails extends StatelessWidget {
   const PaymentReportDetails({Key? key}) : super(key: key);
@@ -67,7 +67,7 @@ class PaymentReportDetails extends StatelessWidget {
 
   Widget _buildSearchBar(PaymentReportProvider paymentReportProvider) {
     return SizedBox(
-      width: SizeConfig.screenWidth/2,
+      width: SizeConfig.screenWidth / 2,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: defaultPadding,
@@ -169,6 +169,23 @@ class PaymentReportDetails extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: DataTable(
+          headingRowColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.hovered)) {
+              return Theme.of(context).colorScheme.background.withOpacity(0.08);
+            }
+            return AppColors.secondaryBg;
+          }),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.zero,
+              topRight: Radius.zero,
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+            border: Border.all(color: AppColors.secondary),
+          ),
           columns: const [
             DataColumn(label: Text('Invoice Number')),
             DataColumn(label: Text('Subscription Name')),

@@ -111,14 +111,15 @@ class ReportTable extends StatelessWidget {
           )
         : ExpandableTableCell(
             child: DefaultCellCard(
-              color: const Color.fromRGBO(163, 175, 198, 1),
+              // color: AppColors.sidemenu,
+              color: AppColors.secondary,
               child: Center(
                 child: Text(
                   content.toUpperCase(),
                   style: const TextStyle(
                       color: Colors.white,
                       // color: Colors.blue,
-                      fontSize: 14,
+                      fontSize: 16,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.bold),
                 ),
@@ -135,13 +136,15 @@ class ReportTable extends StatelessWidget {
           )
         : ExpandableTableCell(
             child: DefaultCellCard(
-              color: const Color.fromARGB(255, 233, 236, 245),
+              color: AppColors.barBg,
+              // color: const Color.fromARGB(255, 233, 236, 245),
               child: Center(
                 child: Text(
                   content.toUpperCase(),
                   style: const TextStyle(
                       color: Color.fromARGB(255, 3, 149, 129),
-                      fontSize: 14,
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -152,7 +155,8 @@ class ReportTable extends StatelessWidget {
   ExpandableTableCell _buildFirstRowCell(String imageUrl) {
     return ExpandableTableCell(builder: (context, details) {
       return DefaultCellCard(
-        color: const Color.fromARGB(255, 233, 236, 245),
+        // color: const Color.fromARGB(255, 233, 236, 245),
+        color: AppColors.barBg,
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child: Row(

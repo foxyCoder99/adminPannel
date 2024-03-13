@@ -17,6 +17,7 @@ class DriveUploadProvider extends ChangeNotifier {
   List<UploadedFile> _filteredFiles = [];
 
   String _searchQuery = '';
+  String _filePath = '';
 
   String selectedFileType = 'DOC';
   TextEditingController emailController = TextEditingController();
@@ -25,8 +26,6 @@ class DriveUploadProvider extends ChangeNotifier {
   final Set<String> _selectedCategories = {};
 
   bool _searchFocused = false;
-  String _transcription = '';
-
   bool _uploadingFile = false;
   bool _isFormVisible = false;
   bool _isLoading = false;
@@ -35,12 +34,12 @@ class DriveUploadProvider extends ChangeNotifier {
   Set<String> get selectedCategories => _selectedCategories;
 
   String get searchQuery => _searchQuery;
+  String get filePath => _filePath;
 
   bool get isLoading => _isLoading;
   bool get isFormVisible => _isFormVisible;
   bool get uploadingFile => _uploadingFile;
   bool get searchFocused => _searchFocused;
-  String get transcription => _transcription;
 
   List<UploadedFile> get uploadedFiles => _uploadedFiles;
   List<UploadedFile> get readFiles => _readFiles;
@@ -70,6 +69,10 @@ class DriveUploadProvider extends ChangeNotifier {
     _searchQuery = value;
     _filterFiles();
     notifyListeners();
+  }
+
+  set filePath(String value) {
+    _filePath = value;
   }
 
   DriveUploadProvider() {
@@ -102,6 +105,8 @@ class DriveUploadProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "accountcode": contantAcountCode,
+          // "filecode": "FC-20240313065530163",
+          // "filetype": "AV",
           "fromdate": "01/01/2022",
           "todate": "03/31/2024"
         }),
@@ -217,7 +222,12 @@ class DriveUploadProvider extends ChangeNotifier {
         body: jsonPayload,
       );
       if (response.statusCode == 200) {
-        print('${response.body} : File Uploaded Successfully');
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('File uploaded successfully'),
+          ),
+        );
       } else {
         print('Upload file failed: ${response.statusCode}');
         print("Response body: ${response.body}");
@@ -235,6 +245,7 @@ class DriveUploadProvider extends ChangeNotifier {
     try {
       final Uint8List bytes = _selectedFile!.bytes!;
       final String filename = _selectedFile!.name;
+
       int fileSize = _selectedFile!.size;
       String base64String = base64Encode(bytes);
       if (fileSize > 50 * 1024 * 1024) {
@@ -252,17 +263,18 @@ class DriveUploadProvider extends ChangeNotifier {
           uploadeddate:
               DateFormat('MM-dd-yyyy').format(DateTime.now()).toString(),
           fileurl: '',
+          issuesummary: '',
+          resolutionsummary: '',
+          processingstatus: '',
           fileExtension: filename.split('.').last,
           filetype: selectedFileType,
           filebase64: base64String,
         );
         _uploadedFiles.add(newUploadedFile);
-        await accountUploadFiles(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('File uploaded successfully.'),
-          ),
-        );
+        // await accountUploadFiles(context);
+        await largeInsertDriveAccountUploadFiles(
+            _selectedFile, newUploadedFile, context);
+
         hideForm();
         fetchUploadedFiles();
         resetForm();
@@ -333,7 +345,7 @@ class DriveUploadProvider extends ChangeNotifier {
                   style: buttonStyleRed,
                   onPressed: () async {
                     await deleteAdvisorDriveFiles(
-                        file.accountcode, file.filecode);
+                        file.accountcode, file.filecode, file.filetype);
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -355,7 +367,7 @@ class DriveUploadProvider extends ChangeNotifier {
   }
 
   Future<void> deleteAdvisorDriveFiles(
-      String accountCode, String fileCode) async {
+      String accountCode, String fileCode, String filetype) async {
     try {
       final response = await http.post(
         Uri.parse('${webApiserviceURL}Advisor/DeleteAdvisorDriveFiles'),
@@ -363,6 +375,7 @@ class DriveUploadProvider extends ChangeNotifier {
         body: jsonEncode({
           "accountcode": contantAcountCode,
           "filecode": fileCode,
+          "filetype": filetype,
           "loggedinuser": "system"
         }),
       );
@@ -378,6 +391,81 @@ class DriveUploadProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Error deleting file: $e');
+    }
+  }
+
+  Future<void> reprocessTranscript(
+      BuildContext context, UploadedFile file) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${webApiserviceURL}Advisor/gettranscriptssummary'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "accountcode": file.accountcode,
+          "filecode": file.filecode,
+          "fileurl": file.fileurl,
+          "loggedinuser": 'system',
+        }),
+      );
+      if (response.statusCode == 200) {
+        print('${response.body} : File reprocessing Successfully');
+      } else {
+        print('reprocessing file failed: ${response.statusCode}');
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print('Error while reprocessing file: $e');
+    }
+  }
+
+  Future<void> largeInsertDriveAccountUploadFiles(PlatformFile? selectedFile,
+      UploadedFile newUploadedFile, BuildContext context) async {
+    try {
+      final url = Uri.parse(
+          'https://advisordevelopment.azurewebsites.net/api/Advisor/LargeInsertDriveAccountUploadFiles');
+      final request = http.MultipartRequest('POST', url);
+      request.headers['Content-Type'] = 'multipart/form-data';
+      // for other platform but not for web 
+      // request.files.add(await http.MultipartFile.fromPath(
+      //   'file',
+      //   selectedFile!.path!,
+      // ));
+      request.files.add(
+        http.MultipartFile(
+          'file',
+          Stream.value(selectedFile!.bytes!.toList()),
+          selectedFile.size,
+          filename: selectedFile.name,
+        ),
+      );
+      request.fields['accountcode'] = contantAcountCode;
+      request.fields['filetype'] = newUploadedFile.filetype;
+
+      if (newUploadedFile.description.isNotEmpty) {
+        request.fields['description'] = newUploadedFile.description;
+      } else {
+        request.fields['description'] = 'No Description';
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        print('Upload successful: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('File uploaded successfully'),
+          ),
+        );
+      } else {
+        print('Upload failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error uploading files: $e');
+    } finally {
+      uploadingFile = false;
+      _clearForm();
+      notifyListeners();
     }
   }
 
@@ -410,19 +498,11 @@ class DriveUploadProvider extends ChangeNotifier {
     _clearForm();
   }
 
-  set transcription(String text) {
-    print(text);
-    _transcription =
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse viverra lectus a interdum condimentum. Nunc condimentum enim ipsum, non eleifend purus interdum quis. In elementum, nisi eget posuere dapibus, erat lorem molestie purus, in dapibus sem eros non metus. Integer consectetur lacus dui, nec placerat nibh pharetra eu. Aenean mattis pulvinar volutpat. Vivamus congue auctor lectus, id feugiat ipsum sodales et. Vestibulum quis elementum ipsum. Duis sodales ac nisl quis gravida. Cras vestibulum massa at hendrerit volutpat. Vestibulum a ullamcorper ante, sed finibus turpis. Maecenas posuere, est lobortis sollicitudin porttitor, nisi metus dictum nibh, ac commodo sem nulla sit amet odio. Praesent vehicula magna arcu, vitae dignissim metus tempor vitae. Donec blandit felis non quam porta, id ultricies lectus sollicitudin. Fusce tortor arcu, lacinia a urna a, pellentesque tincidunt sem. Cras consequat ex ac leo varius, eu suscipit est semper.\n\nDonec vulputate consequat vulputate. Donec facilisis libero in metus facilisis lobortis. Duis porttitor ex et tellus ultricies cursus. Curabitur ac dui ut leo placerat pellentesque sed vel dui. Integer vitae convallis nisl, a pretium libero. Sed diam risus, tincidunt id nibh nec, sollicitudin condimentum ligula. Curabitur pulvinar, eros vitae volutpat vestibulum, nisl ex mollis orci, at ullamcorper est dolor at magna. Vestibulum auctor bibendum neque, sit amet vehicula metus elementum blandit. Pellentesque semper hendrerit justo nec aliquam. Sed mattis nibh a ligula blandit feugiat. Nam egestas erat condimentum, accumsan arcu id, sodales dolor. Mauris sed consequat purus.\n\nCurabitur pellentesque posuere leo, hendrerit mattis ante. Donec nec nisi dui. Nunc facilisis vitae nulla eu laoreet. Suspendisse condimentum sapien quis magna venenatis pharetra. Suspendisse faucibus ac dolor ut accumsan. Phasellus ac nisl scelerisque, ullamcorper ipsum eu, viverra sem. Phasellus volutpat interdum urna, sed interdum elit.\n\nNunc sodales sapien ac nunc tristique cursus. In hac habitasse platea dictumst. Fusce vitae mattis tortor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla non leo non ligula pharetra vulputate vitae vel urna. Vestibulum sagittis felis sem. Morbi facilisis lorem in leo dictum imperdiet. Etiam lacinia venenatis risus, id fringilla mauris gravida sed. Curabitur at mauris et justo ultrices ullamcorper. Duis vitae vulputate odio. Morbi ullamcorper posuere eros sit amet sollicitudin. Proin ipsum augue, ultrices non eleifend ut, finibus ac augue. Etiam a blandit nibh, ac porttitor sapien.\n\nSed tempus gravida nunc, a ultricies lacus ultricies non. Mauris nec condimentum sem. Morbi sed interdum velit. Nunc tincidunt, diam eget aliquam rutrum, erat neque ullamcorper mauris, in accumsan orci metus eget lectus. Nullam quam quam, maximus tristique lobortis ut, varius non urna. Curabitur tempus pharetra dui, nec consequat nulla lacinia quis. Etiam lobortis eros massa, non ullamcorper dui pharetra nec. Fusce ut dolor justo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin sit amet finibus enim, eu iaculis massa. Nam ullamcorper sapien non sapien mattis porta. Phasellus ultrices tortor faucibus, dapibus quam ut, ullamcorper ante.';
-
-    notifyListeners();
-  }
-
   void showTranscriptDialog(BuildContext context, UploadedFile file) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return TranscriptBox(key: UniqueKey(), transcriptText: _transcription, file: file);
+        return TranscriptBox(key: UniqueKey(), file: file);
       },
     );
   }

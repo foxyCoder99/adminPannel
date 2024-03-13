@@ -7,6 +7,9 @@ class UploadedFile {
   final String uploadedby;
   final String uploadeddate;
   final String fileurl;
+  final String issuesummary;
+  final String resolutionsummary;
+  final String processingstatus;
 
   final String fileExtension;
   final String filetype;
@@ -22,6 +25,9 @@ class UploadedFile {
     required this.uploadedby,
     required this.uploadeddate,
     required this.fileurl,
+    required this.issuesummary,
+    required this.resolutionsummary,
+    required this.processingstatus,
     required this.fileExtension,
     required this.filetype,
     //  required this.fileSize,
@@ -37,6 +43,9 @@ class UploadedFile {
       uploadedby: json['uploadedby'] ?? '',
       uploadeddate: json['uploadeddate'] ?? '',
       fileurl: json['fileurl'] ?? '',
+      issuesummary: json['issuesummary'] ?? '',
+      resolutionsummary: json['resolutionsummary'] ?? '',
+      processingstatus: json['processingstatus'] ?? '',
 
       fileExtension: json['fileExtension'] ?? '',
       filetype: json['filetype'] ?? '',
@@ -44,4 +53,8 @@ class UploadedFile {
       filebase64: json['filebase64'] ?? '',
     );
   }
+}
+
+class ClassName {
+  
 }
