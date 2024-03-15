@@ -135,7 +135,7 @@ class ShareFile extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: const Text(
-                  'Cancel',
+                  'Close',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

@@ -105,8 +105,6 @@ class DriveUploadProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "accountcode": contantAcountCode,
-          // "filecode": "FC-20240313065530163",
-          // "filetype": "AV",
           "fromdate": "01/01/2022",
           "todate": "03/31/2024"
         }),
@@ -422,10 +420,10 @@ class DriveUploadProvider extends ChangeNotifier {
       UploadedFile newUploadedFile, BuildContext context) async {
     try {
       final url = Uri.parse(
-          'https://advisordevelopment.azurewebsites.net/api/Advisor/LargeInsertDriveAccountUploadFiles');
+          '${webApiserviceURL}Advisor/LargeInsertDriveAccountUploadFiles');
       final request = http.MultipartRequest('POST', url);
       request.headers['Content-Type'] = 'multipart/form-data';
-      // for other platform but not for web 
+      // for other platform but not for web
       // request.files.add(await http.MultipartFile.fromPath(
       //   'file',
       //   selectedFile!.path!,
@@ -459,9 +457,19 @@ class DriveUploadProvider extends ChangeNotifier {
         );
       } else {
         print('Upload failed: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Upload failed'),
+          ),
+        );
       }
     } catch (e) {
       print('Error uploading files: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Upload failed'),
+        ),
+      );
     } finally {
       uploadingFile = false;
       _clearForm();
@@ -505,5 +513,43 @@ class DriveUploadProvider extends ChangeNotifier {
         return TranscriptBox(key: UniqueKey(), file: file);
       },
     );
+  }
+
+  Future<void> fetchUploadedFileDetails(
+      String fileCode, String fileType) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            '${webApiserviceURL}Advisor/ReadDriveAccountUploadedSharedFiles'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "accountcode": contantAcountCode,
+          "filecode": fileCode,
+          "filetype": fileType,
+          "fromdate": "",
+          "todate": ""
+        }),
+      );
+      if (response.statusCode == 200) {
+        final cleanedResponse =
+            response.body.replaceAll(RegExp(r'[\u0000-\u001F]'), '');
+        final dynamic data = jsonDecode(cleanedResponse);
+
+        if (data is List && data.isNotEmpty) {
+          _readFiles.removeWhere(
+              (file) => file.filecode == fileCode && file.filetype == fileType);
+          _readFiles.add(UploadedFile.fromJson(data[0]));
+          _filterFiles();
+          notifyListeners();
+        } else {
+          print(
+              "Error parsing file details. Expected a non-empty list, but got: $data");
+        }
+      } else {
+        print('Failed to fetch uploaded file details: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching uploaded file details: $e');
+    }
   }
 }

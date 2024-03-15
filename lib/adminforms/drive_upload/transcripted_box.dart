@@ -15,14 +15,14 @@ class TranscriptBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final driveUploadProvider = Provider.of<DriveUploadProvider>(context);
-    print({
-      'object',
-      file.issuesummary,
-      '------',
-      file.processingstatus,
-      '=----------',
-      file.resolutionsummary
-    });
+    // print({
+    //   'object',
+    //   file.issuesummary,
+    //   '------',
+    //   file.processingstatus,
+    //   '=----------',
+    //   file.resolutionsummary
+    // });
     return AlertDialog(
       backgroundColor: AppColors.secondaryBg,
       title: Text(
@@ -112,12 +112,9 @@ class TranscriptBox extends StatelessWidget {
                 style: buttonStyleRed,
                 onPressed: () {
                   Navigator.pop(context);
-                   driveUploadProvider.reprocessTranscript(
-                                context, file);
-                  driveUploadProvider.fetchUploadedFiles();
                 },
                 child: const Text(
-                  'Cancel',
+                  'Close',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

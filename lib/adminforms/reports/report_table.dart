@@ -3,7 +3,7 @@ import 'package:advisorapp/config/size_config.dart';
 import 'package:advisorapp/constants.dart';
 import 'package:advisorapp/custom/search_text_field.dart';
 import 'package:advisorapp/models/admin/report_modals/reporttable_modal.dart';
-import 'package:advisorapp/providers/report_provider.dart';
+import 'package:advisorapp/providers/report_providers/report_provider.dart';
 import 'package:advisorapp/style/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_table/flutter_expandable_table.dart';

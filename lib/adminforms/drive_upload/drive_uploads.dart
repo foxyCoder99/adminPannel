@@ -288,19 +288,50 @@ class DriveUpload extends StatelessWidget {
                                                                   'video')
                                                             PopupMenuItem(
                                                               child:
-                                                                  const ListTile(
-                                                                title: Text(
-                                                                    'Transcripted Text'),
-                                                                leading: Icon(
-                                                                  Icons
-                                                                      .transcribe,
+                                                                  MouseRegion(
+                                                                cursor:
+                                                                    SystemMouseCursors
+                                                                        .click,
+                                                                child: Tooltip(
+                                                                  message: file
+                                                                              .processingstatus ==
+                                                                          'pending'
+                                                                      ? 'Your transcription summary is pending. Please refresh and wait for a while.'
+                                                                      : 'Click to see the transcription summary',
+                                                                  child:
+                                                                      ListTile(
+                                                                    title: file.processingstatus ==
+                                                                            'pending'
+                                                                        ? const Row(
+                                                                            children: [
+                                                                              Icon(Icons.refresh),
+                                                                              SizedBox(width: 8),
+                                                                              Text('Refresh'),
+                                                                            ],
+                                                                          )
+                                                                        : const Text(
+                                                                            'Transcripted Text'),
+                                                                    leading:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .transcribe,
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                               ),
                                                               onTap: () {
-                                                                driveUploadProvider
-                                                                    .showTranscriptDialog(
-                                                                        context,
-                                                                        file);
+                                                                if (file.processingstatus ==
+                                                                    'pending') {
+                                                                  driveUploadProvider
+                                                                      .fetchUploadedFileDetails(
+                                                                          file.filecode,
+                                                                          file.filetype);
+                                                                } else {
+                                                                  driveUploadProvider
+                                                                      .showTranscriptDialog(
+                                                                          context,
+                                                                          file);
+                                                                }
                                                               },
                                                             ),
                                                         ],

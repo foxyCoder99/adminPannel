@@ -66,9 +66,11 @@ class ReportProvider extends ChangeNotifier {
     String searchText = _searchQuery.toLowerCase();
     List<Account> filteredAccounts = _data.where((account) {
       return account.accountdata.any((data) =>
-          data.accountname?.toLowerCase().contains(searchText) == true ||
-          data.lastname?.toLowerCase().contains(searchText) == true ||
-          data.workemail?.toLowerCase().contains(searchText) == true);
+              data.accountname?.toLowerCase().contains(searchText) == true ||
+              data.lastname?.toLowerCase().contains(searchText) == true ||
+              data.workemail?.toLowerCase().contains(searchText) == true) ||
+          account.employers.any((employer) =>
+              employer.companyname?.toLowerCase().contains(searchText) == true);
     }).toList();
     return filteredAccounts;
   }
